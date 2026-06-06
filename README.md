@@ -1,4 +1,4 @@
-# 🚀 NexBrief — Daily IT & Tech Intelligence Platform
+# NexBrief — Daily IT & Tech Intelligence Platform
 
 <p align="center">
   <a href="https://nexbrief-news.onrender.com" target="_blank">
@@ -12,7 +12,7 @@
 ---
 
 ## 🌐 Live Application URL
-🚀 **Visit the Live Site:** **[https://nexbrief-news.onrender.com](https://nexbrief-news.onrender.com)**
+ **Visit the Live Site:** **[https://nexbrief-news.onrender.com](https://nexbrief-news.onrender.com)**
 
 ---
 

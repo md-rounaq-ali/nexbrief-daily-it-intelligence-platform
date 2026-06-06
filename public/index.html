@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>NexBrief — Daily IT & Tech Intelligence for Engineers</title>
-  <meta name="description" content="NexBrief is a daily IT & tech newsletter for B.Tech students and engineers, created by Md Rounaq Ali. Delivering curated AI, cloud, education, and research news daily at 7 AM IST. Free forever." />
-  <meta name="keywords" content="Md Rounaq Ali, NexBrief, Nex Brief, IT Newsletter, Tech Newsletter, B.Tech News, Engineering Newsletter, Md Rounaq Ali Projects, Newsletter website" />
+  <meta name="description"
+    content="NexBrief is a daily IT & tech newsletter for B.Tech students and engineers, created by Md Rounaq Ali. Delivering curated AI, cloud, education, and research news daily at 7 AM IST. Free forever." />
+  <meta name="keywords"
+    content="Md Rounaq Ali, NexBrief, Nex Brief, IT Newsletter, Tech Newsletter, B.Tech News, Engineering Newsletter, Md Rounaq Ali Projects, Newsletter website" />
   <meta name="author" content="Md Rounaq Ali" />
-  
+  <meta name="google-site-verification" content="WbLnYv_r6ww11rtCvVFSACnYkrwxPiqdCcWfjJmmz6E" />
   <!-- Google Site Verification (Replace content value with your token from Google Search Console) -->
   <meta name="google-site-verification" content="YOUR_GOOGLE_VERIFICATION_CODE_HERE" />
 
@@ -33,9 +36,11 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
   <link rel="stylesheet" href="/css/style.css" />
 </head>
+
 <body>
 
   <!-- Navigation -->
@@ -67,7 +72,8 @@
       </h1>
       <p class="hero-subtitle">
         NexBrief is India's first dedicated IT newsletter platform — <strong>50% IT & AI</strong>,
-        <strong>30% Education & Research</strong>, <strong>20% World News</strong>. Delivered at <strong>7 AM IST</strong>, every single morning.
+        <strong>30% Education & Research</strong>, <strong>20% World News</strong>. Delivered at <strong>7 AM
+          IST</strong>, every single morning.
       </p>
       <div class="hero-cta">
         <button class="btn btn-primary btn-lg" id="hero-register-btn">
@@ -113,12 +119,14 @@
         <div class="feature-card">
           <div class="feature-icon" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);">🔴</div>
           <h3>50% IT & Technology</h3>
-          <p>AI, Machine Learning, Cybersecurity, Cloud Computing, and Software Development — the foundation of your career.</p>
+          <p>AI, Machine Learning, Cybersecurity, Cloud Computing, and Software Development — the foundation of your
+            career.</p>
         </div>
         <div class="feature-card">
           <div class="feature-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706);">📚</div>
           <h3>30% Education & Research</h3>
-          <p>University news, B.Tech programs, EdTech updates, scholarships, and cutting-edge research relevant to students.</p>
+          <p>University news, B.Tech programs, EdTech updates, scholarships, and cutting-edge research relevant to
+            students.</p>
         </div>
         <div class="feature-card">
           <div class="feature-icon" style="background:linear-gradient(135deg,#10b981,#059669);">🌐</div>
@@ -167,18 +175,22 @@
         <form id="register-form" novalidate>
           <div class="form-group">
             <label for="reg-name" class="form-label">Full Name</label>
-            <input type="text" id="reg-name" class="form-input" placeholder="e.g. Rounaq Ali" autocomplete="name" required />
+            <input type="text" id="reg-name" class="form-input" placeholder="e.g. Rounaq Ali" autocomplete="name"
+              required />
             <span class="field-error" id="reg-name-error"></span>
           </div>
           <div class="form-group">
             <label for="reg-email" class="form-label">Email Address</label>
-            <input type="email" id="reg-email" class="form-input" placeholder="you@example.com" autocomplete="email" required />
+            <input type="email" id="reg-email" class="form-input" placeholder="you@example.com" autocomplete="email"
+              required />
             <span class="field-error" id="reg-email-error"></span>
           </div>
           <div class="form-group">
-            <label for="reg-password" class="form-label">Password <span style="color:var(--color-text-faint);font-weight:400;">(min 6 characters)</span></label>
+            <label for="reg-password" class="form-label">Password <span
+                style="color:var(--color-text-faint);font-weight:400;">(min 6 characters)</span></label>
             <div class="input-wrapper">
-              <input type="password" id="reg-password" class="form-input" placeholder="Create a strong password" autocomplete="new-password" required />
+              <input type="password" id="reg-password" class="form-input" placeholder="Create a strong password"
+                autocomplete="new-password" required />
               <button type="button" class="toggle-pw" id="toggle-reg-pw" aria-label="Toggle visibility">👁️</button>
             </div>
             <span class="field-error" id="reg-password-error"></span>
@@ -189,27 +201,37 @@
             <span class="btn-spinner hidden"></span>
           </button>
         </form>
-        <p class="modal-switch">Already have an account? <button class="link-btn" id="switch-to-login">Sign in here</button></p>
+        <p class="modal-switch">Already have an account? <button class="link-btn" id="switch-to-login">Sign in
+            here</button></p>
       </div>
 
       <!-- ── Register Step 2: Verify Email OTP ── -->
       <div class="modal-form hidden" id="form-register-otp">
         <div class="modal-header">
           <div class="modal-logo"><span class="logo-nex">Nex</span>Brief</div>
-          <div class="forgot-step-badge" style="background:rgba(16,185,129,0.1);border-color:rgba(16,185,129,0.3);color:#6ee7b7;">Step 2 of 2 — Verify Email</div>
+          <div class="forgot-step-badge"
+            style="background:rgba(16,185,129,0.1);border-color:rgba(16,185,129,0.3);color:#6ee7b7;">Step 2 of 2 —
+            Verify Email</div>
           <h2 class="modal-title">Check Your Inbox</h2>
-          <p class="modal-subtitle">We sent a 6-digit code to <strong id="reg-otp-sent-to" style="color:var(--color-text);"></strong> — enter it below to activate your account.</p>
+          <p class="modal-subtitle">We sent a 6-digit code to <strong id="reg-otp-sent-to"
+              style="color:var(--color-text);"></strong> — enter it below to activate your account.</p>
         </div>
         <form id="reg-otp-form" novalidate>
           <div class="form-group">
             <label class="form-label">6-Digit Verification Code</label>
             <div class="otp-inputs" id="reg-otp-inputs">
-              <input type="text" class="otp-box reg-otp-box" maxlength="1" data-index="0" inputmode="numeric" pattern="[0-9]" aria-label="Digit 1" />
-              <input type="text" class="otp-box reg-otp-box" maxlength="1" data-index="1" inputmode="numeric" pattern="[0-9]" aria-label="Digit 2" />
-              <input type="text" class="otp-box reg-otp-box" maxlength="1" data-index="2" inputmode="numeric" pattern="[0-9]" aria-label="Digit 3" />
-              <input type="text" class="otp-box reg-otp-box" maxlength="1" data-index="3" inputmode="numeric" pattern="[0-9]" aria-label="Digit 4" />
-              <input type="text" class="otp-box reg-otp-box" maxlength="1" data-index="4" inputmode="numeric" pattern="[0-9]" aria-label="Digit 5" />
-              <input type="text" class="otp-box reg-otp-box" maxlength="1" data-index="5" inputmode="numeric" pattern="[0-9]" aria-label="Digit 6" />
+              <input type="text" class="otp-box reg-otp-box" maxlength="1" data-index="0" inputmode="numeric"
+                pattern="[0-9]" aria-label="Digit 1" />
+              <input type="text" class="otp-box reg-otp-box" maxlength="1" data-index="1" inputmode="numeric"
+                pattern="[0-9]" aria-label="Digit 2" />
+              <input type="text" class="otp-box reg-otp-box" maxlength="1" data-index="2" inputmode="numeric"
+                pattern="[0-9]" aria-label="Digit 3" />
+              <input type="text" class="otp-box reg-otp-box" maxlength="1" data-index="3" inputmode="numeric"
+                pattern="[0-9]" aria-label="Digit 4" />
+              <input type="text" class="otp-box reg-otp-box" maxlength="1" data-index="4" inputmode="numeric"
+                pattern="[0-9]" aria-label="Digit 5" />
+              <input type="text" class="otp-box reg-otp-box" maxlength="1" data-index="5" inputmode="numeric"
+                pattern="[0-9]" aria-label="Digit 6" />
             </div>
             <span class="field-error" id="reg-otp-error"></span>
           </div>
@@ -236,13 +258,15 @@
         <form id="login-form" novalidate>
           <div class="form-group">
             <label for="login-email" class="form-label">Email Address</label>
-            <input type="email" id="login-email" class="form-input" placeholder="you@example.com" autocomplete="email" required />
+            <input type="email" id="login-email" class="form-input" placeholder="you@example.com" autocomplete="email"
+              required />
             <span class="field-error" id="login-email-error"></span>
           </div>
           <div class="form-group">
             <label for="login-password" class="form-label">Password</label>
             <div class="input-wrapper">
-              <input type="password" id="login-password" class="form-input" placeholder="Your password" autocomplete="current-password" required />
+              <input type="password" id="login-password" class="form-input" placeholder="Your password"
+                autocomplete="current-password" required />
               <button type="button" class="toggle-pw" id="toggle-login-pw" aria-label="Toggle visibility">👁️</button>
             </div>
             <span class="field-error" id="login-password-error"></span>
@@ -256,7 +280,8 @@
             <span class="btn-spinner hidden"></span>
           </button>
         </form>
-        <p class="modal-switch">New here? <button class="link-btn" id="switch-to-register">Create a free account</button></p>
+        <p class="modal-switch">New here? <button class="link-btn" id="switch-to-register">Create a free
+            account</button></p>
       </div>
 
       <!-- ── Forgot Password: Step 1 — Enter Email ── -->
@@ -270,7 +295,8 @@
         <form id="forgot-form-1" novalidate>
           <div class="form-group">
             <label for="forgot-email" class="form-label">Registered Email Address</label>
-            <input type="email" id="forgot-email" class="form-input" placeholder="you@example.com" autocomplete="email" required />
+            <input type="email" id="forgot-email" class="form-input" placeholder="you@example.com" autocomplete="email"
+              required />
             <span class="field-error" id="forgot-email-error"></span>
           </div>
           <div id="forgot-1-server-error" class="server-error"></div>
@@ -288,18 +314,25 @@
           <div class="modal-logo"><span class="logo-nex">Nex</span>Brief</div>
           <div class="forgot-step-badge">Step 2 of 3</div>
           <h2 class="modal-title">Enter Verification Code</h2>
-          <p class="modal-subtitle">We sent a 6-digit code to <strong id="otp-sent-to"></strong>. Check your inbox (and spam folder).</p>
+          <p class="modal-subtitle">We sent a 6-digit code to <strong id="otp-sent-to"></strong>. Check your inbox (and
+            spam folder).</p>
         </div>
         <form id="forgot-form-2" novalidate>
           <div class="form-group">
             <label class="form-label">6-Digit Verification Code</label>
             <div class="otp-inputs" id="otp-inputs">
-              <input type="text" class="otp-box" maxlength="1" data-index="0" inputmode="numeric" pattern="[0-9]" aria-label="Digit 1" />
-              <input type="text" class="otp-box" maxlength="1" data-index="1" inputmode="numeric" pattern="[0-9]" aria-label="Digit 2" />
-              <input type="text" class="otp-box" maxlength="1" data-index="2" inputmode="numeric" pattern="[0-9]" aria-label="Digit 3" />
-              <input type="text" class="otp-box" maxlength="1" data-index="3" inputmode="numeric" pattern="[0-9]" aria-label="Digit 4" />
-              <input type="text" class="otp-box" maxlength="1" data-index="4" inputmode="numeric" pattern="[0-9]" aria-label="Digit 5" />
-              <input type="text" class="otp-box" maxlength="1" data-index="5" inputmode="numeric" pattern="[0-9]" aria-label="Digit 6" />
+              <input type="text" class="otp-box" maxlength="1" data-index="0" inputmode="numeric" pattern="[0-9]"
+                aria-label="Digit 1" />
+              <input type="text" class="otp-box" maxlength="1" data-index="1" inputmode="numeric" pattern="[0-9]"
+                aria-label="Digit 2" />
+              <input type="text" class="otp-box" maxlength="1" data-index="2" inputmode="numeric" pattern="[0-9]"
+                aria-label="Digit 3" />
+              <input type="text" class="otp-box" maxlength="1" data-index="3" inputmode="numeric" pattern="[0-9]"
+                aria-label="Digit 4" />
+              <input type="text" class="otp-box" maxlength="1" data-index="4" inputmode="numeric" pattern="[0-9]"
+                aria-label="Digit 5" />
+              <input type="text" class="otp-box" maxlength="1" data-index="5" inputmode="numeric" pattern="[0-9]"
+                aria-label="Digit 6" />
             </div>
             <span class="field-error" id="otp-error"></span>
           </div>
@@ -326,9 +359,11 @@
         </div>
         <form id="forgot-form-3" novalidate>
           <div class="form-group">
-            <label for="new-password" class="form-label">New Password <span style="color:var(--color-text-faint);font-weight:400;">(min 6 characters)</span></label>
+            <label for="new-password" class="form-label">New Password <span
+                style="color:var(--color-text-faint);font-weight:400;">(min 6 characters)</span></label>
             <div class="input-wrapper">
-              <input type="password" id="new-password" class="form-input" placeholder="Create a strong password" autocomplete="new-password" required />
+              <input type="password" id="new-password" class="form-input" placeholder="Create a strong password"
+                autocomplete="new-password" required />
               <button type="button" class="toggle-pw" id="toggle-new-pw" aria-label="Toggle visibility">👁️</button>
             </div>
             <span class="field-error" id="new-password-error"></span>
@@ -336,7 +371,8 @@
           <div class="form-group">
             <label for="confirm-password" class="form-label">Confirm New Password</label>
             <div class="input-wrapper">
-              <input type="password" id="confirm-password" class="form-input" placeholder="Re-enter your new password" autocomplete="new-password" required />
+              <input type="password" id="confirm-password" class="form-input" placeholder="Re-enter your new password"
+                autocomplete="new-password" required />
               <button type="button" class="toggle-pw" id="toggle-confirm-pw" aria-label="Toggle visibility">👁️</button>
             </div>
             <span class="field-error" id="confirm-password-error"></span>
@@ -370,11 +406,15 @@
         </div>
       </div>
       <div class="footer-bottom">
-        <p>© <span id="footer-year"></span> NexBrief. All rights reserved. Made by <a href="https://md-rounaq-ali.netlify.app/" target="_blank" rel="noopener noreferrer" style="color:#818cf8; text-decoration: underline; font-weight: 500;">Md Rounaq Ali</a> for India's engineers.</p>
+        <p>© <span id="footer-year"></span> NexBrief. All rights reserved. Made by <a
+            href="https://md-rounaq-ali.netlify.app/" target="_blank" rel="noopener noreferrer"
+            style="color:#818cf8; text-decoration: underline; font-weight: 500;">Md Rounaq Ali</a> for India's
+          engineers.</p>
       </div>
     </div>
   </footer>
 
   <script src="/js/app.js"></script>
 </body>
+
 </html>
