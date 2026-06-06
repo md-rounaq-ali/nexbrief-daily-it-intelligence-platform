@@ -92,6 +92,9 @@ router.get('/digests', protect, adminOnly, async (req, res) => {
 // @access  Admin
 router.put('/users/:id/toggle-admin', protect, adminOnly, async (req, res) => {
   try {
+    if (req.user.email !== 'tabrasali7@gmail.com') {
+      return res.status(403).json({ success: false, message: 'Only the main administrator can modify admin privileges.' });
+    }
     const user = await User.findById(req.params.id);
     if (!user) return res.status(404).json({ success: false, message: 'User not found.' });
     if (user.email === 'tabrasali7@gmail.com') {

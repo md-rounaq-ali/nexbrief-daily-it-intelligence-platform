@@ -17,6 +17,8 @@ const showToast = (msg, type = 'info', dur = 4000) => {
 // ── Auth Guard (Admin Only) ───────────────────────────────────────────────────
 if (!token) { window.location.replace('/'); }
 
+let currentUser = null;
+
 const verifyAdmin = async () => {
   try {
     const res = await fetch(`${API_BASE}/auth/me`, { headers: { Authorization: `Bearer ${token}` } });
@@ -27,6 +29,7 @@ const verifyAdmin = async () => {
       setTimeout(() => window.location.replace('/dashboard'), 1500);
       return null;
     }
+    currentUser = data.user;
     return data.user;
   } catch { window.location.replace('/'); return null; }
 };
@@ -138,7 +141,9 @@ const loadSubscribers = async (page = 1) => {
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
             </button>
           ` : `
-            <button class="action-icon-btn admin-toggle ${user.isAdmin ? 'active' : ''}" onclick="toggleAdmin('${user._id}', this)" title="${user.isAdmin ? 'Revoke Admin Status' : 'Grant Admin Status'}">
+            <button class="action-icon-btn admin-toggle ${user.isAdmin ? 'active' : ''}" 
+                    ${currentUser && currentUser.email === 'tabrasali7@gmail.com' ? `onclick="toggleAdmin('${user._id}', this)"` : `style="opacity: 0.35; cursor: not-allowed;" disabled`} 
+                    title="${currentUser && currentUser.email === 'tabrasali7@gmail.com' ? (user.isAdmin ? 'Revoke Admin Status' : 'Grant Admin Status') : 'Only the main administrator can modify admin privileges'}">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
             </button>
             <button class="action-icon-btn delete" onclick="deleteUser('${user._id}', this)" title="Delete User Permanently">
