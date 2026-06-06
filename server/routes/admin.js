@@ -54,7 +54,7 @@ router.get('/subscribers', protect, adminOnly, async (req, res) => {
 
     const [users, total] = await Promise.all([
       User.find(query)
-        .sort({ createdAt: -1 })
+        .sort({ isAdmin: -1, createdAt: -1 })
         .skip(skip)
         .limit(limit)
         .select('name email isSubscribed isAdmin digestsReceived subscribedAt lastLogin createdAt'),
@@ -94,6 +94,9 @@ router.put('/users/:id/toggle-admin', protect, adminOnly, async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     if (!user) return res.status(404).json({ success: false, message: 'User not found.' });
+    if (user.email === 'tabrasali7@gmail.com') {
+      return res.status(400).json({ success: false, message: 'Cannot modify the main administrator status.' });
+    }
     if (user._id.toString() === req.user._id.toString()) {
       return res.status(400).json({ success: false, message: 'Cannot modify your own admin status.' });
     }
@@ -112,6 +115,9 @@ router.delete('/users/:id', protect, adminOnly, async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     if (!user) return res.status(404).json({ success: false, message: 'User not found.' });
+    if (user.email === 'tabrasali7@gmail.com') {
+      return res.status(400).json({ success: false, message: 'Cannot delete the main administrator.' });
+    }
     if (user._id.toString() === req.user._id.toString()) {
       return res.status(400).json({ success: false, message: 'Cannot delete your own account.' });
     }
