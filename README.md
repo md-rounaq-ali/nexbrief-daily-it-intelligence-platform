@@ -1,32 +1,37 @@
 # 🚀 NexBrief — Daily IT & Tech Intelligence Platform
 
 <p align="center">
-  <img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white" alt="HTML5" />
-  <img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white" alt="CSS3" />
-  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript" />
-  <img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white" alt="Node.js" />
-  <img src="https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white" alt="MongoDB" />
-  <img src="https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white" alt="Express" />
+  <a href="https://nexbrief-news.onrender.com" target="_blank">
+    <img src="https://img.shields.io/badge/Live%20Demo-Online-brightgreen?style=for-the-badge&logo=render&logoColor=white" alt="Live Demo" />
+  </a>
+  <img src="https://img.shields.io/badge/Node.js-v18+-blue?style=for-the-badge&logo=nodedotjs&logoColor=white" alt="Node version" />
+  <img src="https://img.shields.io/badge/MongoDB-Atlas-47A248?style=for-the-badge&logo=mongodb&logoColor=white" alt="MongoDB" />
+  <img src="https://img.shields.io/badge/Email%20Engine-Brevo%20API-orange?style=for-the-badge&logo=mailchimp&logoColor=white" alt="Brevo API" />
 </p>
 
 ---
 
-**NexBrief** is a premium, fully automated daily newsletter platform designed for engineers, IT professionals, and B.Tech students. It automatically aggregates real-world tech, cloud, AI, research, and general news to deliver a beautifully formatted briefing directly to subscribers' inboxes every morning at **7:00 AM IST**.
+## 🌐 Live Application URL
+🚀 **Visit the Live Site:** **[https://nexbrief-news.onrender.com](https://nexbrief-news.onrender.com)**
+
+---
+
+**NexBrief** is a premium, fully automated daily newsletter platform designed for engineers, IT professionals, and B.Tech students. It aggregates real-world tech, cloud, AI, research, and general news to deliver a beautifully formatted briefing directly to subscribers' inboxes every morning at **7:00 AM IST**.
 
 ---
 
 ## 🌟 Key Features
 
 *   📰 **Real-World Aggregation**: Uses live feeds to construct newsletters featuring real, verifiable tech, education, and global news.
-*   📧 **Robust Mail Engine**: Built with a custom HTTPS-based Brevo API integration on **Port 443** to completely bypass common ISP SMTP port blocks (Ports 587 & 465).
-*   🔐 **Secure Authentication**: Implementation of JWT session tokens with hashed password databases (`bcryptjs`).
-*   🖥️ **Interactive User Dashboard**: View today's edition, check reading stats, and manage subscription preferences.
+*   📧 **Bypass SMTP Blocks (HTTPS Email Engine)**: Uses Brevo's Transactional HTTP API over **Port 443** (instead of standard SMTP ports like `587` or `465`), bypassing common ISP port blocks (such as ACT Fibernet) and ensuring 100% email delivery.
+*   📝 **Skimmable Content**: Automatically parses long article descriptions into clean, bullet-pointed lists in the email body for fast scanning and readability.
+*   🔐 **Secure Authentication**: Built with JWT session tokens and password hashing (`bcryptjs`).
 *   ⚙️ **Advanced Admin Console**:
     *   Monitor subscriber lists with modern, clean UI icons.
-    *   Promote/demote administrator privileges.
+    *   Promote or demote administrator privileges.
     *   Permanently delete users to allow direct re-registration.
     *   Manually trigger global daily digests and send test mockups.
-*   🎨 **Premium UI/UX**: Designed with glassmorphism, responsive grids, and dark modes optimized for mobile, tablet, laptop, and smart TV screens.
+*   🎨 **Premium UI/UX**: Designed with a sleek dark-mode glassmorphic theme, responsive grids, and clean hover state animations.
 
 ---
 
@@ -38,7 +43,7 @@
 | **Backend** | Node.js + Express.js | Robust REST API endpoints |
 | **Database** | MongoDB Atlas + Mongoose | Schema validation for users, digests, and pending states |
 | **Email Delivery** | Brevo Transactional HTTPS API | Port 443 delivery for maximum ISP compatibility |
-| **Scheduling** | node-cron + cron-job.org | Automated triggers for morning digests |
+| **Scheduling** | cron-job.org | Automated triggers for morning digests |
 
 ---
 
@@ -52,8 +57,7 @@ nexbrief/
 │   ├── models/               # Mongoose Schemas (User, Digest, PendingUser)
 │   ├── routes/               # REST API Routes (Auth, Admin, News, Newsletter)
 │   ├── services/             # Core Logic (newsService, emailService)
-│   ├── middleware/           # Authorization Guards (JWT Protect, Admin Guard)
-│   └── jobs/dailyDigest.js   # Background Cron Scheduling & Dispatch Logic
+│   └── middleware/           # Authorization Guards (JWT Protect, Admin Guard)
 ├── public/
 │   ├── index.html            # Landing / Auth Entry Interface
 │   ├── dashboard.html        # Interactive User Profile Panel
@@ -76,8 +80,8 @@ nexbrief/
 ### 2. Installation
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/nexbrief.git
-cd nexbrief
+git clone https://github.com/md-rounaq-ali/nexbrief-daily-it-intelligence-platform.git
+cd nexbrief-daily-it-intelligence-platform
 
 # Install dependencies
 npm install
@@ -87,13 +91,14 @@ npm install
 Rename `.env.example` to `.env` and populate it with your keys:
 ```env
 PORT=3000
-MONGO_URI=your_mongodb_connection_string
+MONGODB_URI=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret_token
 BREVO_API_KEY=your_brevo_xkeysib_api_key
 FROM_EMAIL=your_sender_email@domain.com
 FROM_NAME="NexBrief Daily"
 APP_URL=http://localhost:3000
 ```
+*(Note: Be sure to use `MONGODB_URI` exactly as shown above, which is what the database connection driver expects).*
 
 ### 4. Running the Development Server
 ```bash
@@ -103,9 +108,21 @@ Open `http://localhost:3000` in your web browser.
 
 ---
 
-## 🌐 Live Deployment (Render.com + Cron-Job.org)
+## 🌐 Live Deployment & Automation
 
-For step-by-step setup guides, environment variable configurations, and automated server pings to keep the free hosting active 24/7, refer to the **[Deployment Guide](file:///C:/Users/Md%20Rounaq%20Ali/.gemini/antigravity/brain/3ff8d732-737c-4f29-bf83-2f1b1647f0ca/deployment_guide.md)**.
+This project is configured for deployment on **Render.com** (hosting the Node/Express backend) and **cron-job.org** (triggering the automated daily newsletter delivery).
+
+### Automating the Daily Digest:
+To trigger the automated daily dispatch, set up a cron job pointing to:
+* **Endpoint:** `POST https://nexbrief-news.onrender.com/api/newsletter/trigger`
+* **Headers:** `Content-Type: application/json`
+* **Body:**
+  ```json
+  {
+    "secretKey": "your_jwt_secret_token"
+  }
+  ```
+* **Schedule:** Daily at `07:00 AM IST` (Timezone: `Asia/Kolkata`)
 
 ---
 
@@ -113,3 +130,4 @@ For step-by-step setup guides, environment variable configurations, and automate
 
 *   **Made by Md Rounaq Ali** for India's engineers. Portfolio: [md-rounaq-ali.netlify.app](https://md-rounaq-ali.netlify.app/)
 *   Licensed under the MIT License. Feel free to clone, modify, and host!
+

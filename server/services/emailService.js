@@ -54,13 +54,50 @@ const sendEmailViaAPI = async ({ toEmail, toName, subject, htmlContent }) => {
 };
 
 // ─── Daily Digest Email Template ──────────────────────────────────────────────
+const formatDescriptionToBullets = (desc) => {
+  if (!desc) return '';
+  
+  // Split description by sentence boundaries: period followed by space
+  const rawParts = desc.split(/\.\s+/);
+  const sentences = [];
+  let currentSentence = '';
+  
+  for (let i = 0; i < rawParts.length; i++) {
+    const part = rawParts[i].trim();
+    if (!part) continue;
+    
+    if (currentSentence) {
+      currentSentence += '. ' + part;
+    } else {
+      currentSentence = part;
+    }
+    
+    // Determine if we should push this part or keep combining (e.g., if it's an abbreviation)
+    const words = part.split(/\s+/);
+    const lastWord = words[words.length - 1].replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "");
+    const isAbbreviation = ['us', 'mr', 'ms', 'dr', 'prof', 'tech', 'inc', 'ltd', 'vs', 'btech', 'mtech', 'ai'].includes(lastWord.toLowerCase());
+    
+    if (!isAbbreviation || i === rawParts.length - 1) {
+      sentences.push(currentSentence.endsWith('.') ? currentSentence : currentSentence + '.');
+      currentSentence = '';
+    }
+  }
+
+  // Format as bullet points
+  return `
+    <ul style="margin:0 0 14px 0;padding-left:20px;color:#94a3b8;font-size:13px;line-height:1.6;">
+      ${sentences.map(s => `<li style="margin-bottom:6px;">${s}</li>`).join('')}
+    </ul>
+  `;
+};
+
 const buildDigestEmailHtml = (user, digest, dateStr) => {
   const renderCards = (articles) =>
     (articles || []).map(a => `
     <div style="background:#1e293b;border:1px solid #334155;border-radius:12px;padding:20px;margin-bottom:16px;">
       <div style="display:inline-block;background:${categoryColors[a.category] || '#6366f1'};color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:0.5px;margin-bottom:10px;text-transform:uppercase;">${a.category}</div>
       <h3 style="color:#f1f5f9;font-size:15px;font-weight:700;margin:0 0 8px 0;line-height:1.4;">${a.title}</h3>
-      <p style="color:#94a3b8;font-size:13px;margin:0 0 12px 0;line-height:1.6;">${a.description}</p>
+      ${formatDescriptionToBullets(a.description)}
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
         <span style="color:#64748b;font-size:12px;">📰 ${a.source} &nbsp;·&nbsp; ${new Date(a.publishedAt).toLocaleDateString('en-IN', { day:'numeric', month:'short' })}</span>
         <a href="${a.url}" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;font-size:12px;font-weight:600;padding:6px 16px;border-radius:8px;text-decoration:none;" target="_blank">Read More →</a>
