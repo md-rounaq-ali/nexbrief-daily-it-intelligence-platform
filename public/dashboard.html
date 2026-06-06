@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NexBrief Dashboard — Your Daily IT & Tech Digest</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/dashboard.css" />
+</head>
+<body class="dashboard-body">
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="/" class="sidebar-logo"><span class="logo-nex">Nex</span>Brief</a>
+      <button class="sidebar-close" id="sidebar-close" aria-label="Close">✕</button>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="#today" class="sidebar-link active" onclick="closeAllModals()">
+        <span class="nav-icon">🗞️</span> Today's Digest
+      </a>
+      <a href="#it-news" class="sidebar-link">
+        <span class="nav-icon">🔴</span> IT & Technology <span class="sidebar-pct">50%</span>
+      </a>
+      <a href="#edu-news" class="sidebar-link">
+        <span class="nav-icon">📚</span> Education <span class="sidebar-pct">30%</span>
+      </a>
+      <a href="#world-news" class="sidebar-link">
+        <span class="nav-icon">🌐</span> World News <span class="sidebar-pct">20%</span>
+      </a>
+      <a href="#history" class="sidebar-link">
+        <span class="nav-icon">📁</span> Past Digests
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user" id="sidebar-user">
+        <div class="user-avatar" id="user-avatar-initials">?</div>
+        <div class="user-info">
+          <div class="user-name" id="sidebar-user-name">Loading...</div>
+          <div class="user-status" id="sidebar-user-email">...</div>
+        </div>
+      </div>
+      <div class="sidebar-actions">
+        <button class="btn btn-ghost btn-sm btn-full" id="subscribe-toggle-btn">⏸ Pause Digest</button>
+        <button class="btn btn-danger btn-sm btn-full" id="logout-btn">🚪 Sign Out</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Mobile Header -->
+  <header class="mobile-header">
+    <button class="hamburger" id="hamburger-btn" aria-label="Open menu">☰</button>
+    <div class="mobile-logo"><span class="logo-nex">Nex</span>Brief</div>
+    <div class="mobile-user-avatar" id="mobile-user-avatar">?</div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content" id="main-content">
+
+    <!-- Page Header -->
+    <div class="page-header" id="today">
+      <div>
+        <h1 class="page-title">Daily Intelligence Digest</h1>
+        <p class="page-date" id="page-date">Loading...</p>
+      </div>
+      <div class="page-header-actions">
+        <div class="delivery-badge" id="delivery-badge">
+          <span class="badge-dot"></span>
+          <span id="delivery-status">Loading...</span>
+        </div>
+        <button class="btn btn-primary btn-sm" id="refresh-btn">↺ Refresh</button>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading-state" id="loading-state">
+      <div class="skeleton skeleton-header"></div>
+      <div class="news-grid" style="margin-top:16px;">
+        <div class="skeleton skeleton-card"></div>
+        <div class="skeleton skeleton-card"></div>
+        <div class="skeleton skeleton-card"></div>
+        <div class="skeleton skeleton-card"></div>
+      </div>
+    </div>
+
+    <!-- Error State -->
+    <div class="error-state hidden" id="error-state">
+      <div class="error-icon">⚠️</div>
+      <h3>Could Not Load News</h3>
+      <p>Check your NewsAPI key in <code>.env</code> or try again later.</p>
+      <button class="btn btn-primary" id="retry-btn">↺ Try Again</button>
+    </div>
+
+    <!-- Content Wrapper -->
+    <div class="content-wrapper hidden" id="content-wrapper">
+
+      <!-- Summary Bar -->
+      <div class="summary-bar" id="summary-bar">
+        <div class="summary-item">
+          <span class="summary-icon">🔴</span>
+          <span class="summary-label">IT Articles</span>
+          <span class="summary-count" id="it-count">—</span>
+          <span class="summary-pct">50%</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-icon">📚</span>
+          <span class="summary-label">Education</span>
+          <span class="summary-count" id="edu-count">—</span>
+          <span class="summary-pct">30%</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-icon">🌐</span>
+          <span class="summary-label">World News</span>
+          <span class="summary-count" id="world-count">—</span>
+          <span class="summary-pct">20%</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-icon">📧</span>
+          <span class="summary-label">Email</span>
+          <span class="summary-count" id="email-status">—</span>
+        </div>
+      </div>
+
+      <!-- ── IT & Technology (50%) ── -->
+      <section class="news-section" id="it-news">
+        <div class="section-head">
+          <div class="section-head-left">
+            <div class="section-dot" style="background:#ef4444;"></div>
+            <div>
+              <h2 class="news-section-title">IT & Technology</h2>
+              <p class="news-section-sub">AI · Cybersecurity · Cloud · Software Development</p>
+            </div>
+          </div>
+          <div class="section-pct-badge it-badge">50% of Digest</div>
+        </div>
+        <div class="news-grid" id="it-news-grid"></div>
+      </section>
+
+      <!-- ── Education & Research (30%) ── -->
+      <section class="news-section" id="edu-news">
+        <div class="section-head">
+          <div class="section-head-left">
+            <div class="section-dot" style="background:#f59e0b;"></div>
+            <div>
+              <h2 class="news-section-title">Education & Research</h2>
+              <p class="news-section-sub">University · B.Tech · Science · EdTech · Research</p>
+            </div>
+          </div>
+          <div class="section-pct-badge edu-badge">30% of Digest</div>
+        </div>
+        <div class="news-grid news-grid-sm" id="edu-news-grid"></div>
+      </section>
+
+      <!-- ── World Headlines (20%) ── -->
+      <section class="news-section" id="world-news">
+        <div class="section-head">
+          <div class="section-head-left">
+            <div class="section-dot" style="background:#10b981;"></div>
+            <div>
+              <h2 class="news-section-title">World Headlines</h2>
+              <p class="news-section-sub">Business · Global Events · Other</p>
+            </div>
+          </div>
+          <div class="section-pct-badge world-badge">20% of Digest</div>
+        </div>
+        <div class="news-grid news-grid-sm" id="world-news-grid"></div>
+      </section>
+
+      <!-- Past Digests -->
+      <section class="news-section" id="history">
+        <div class="section-head">
+          <div class="section-head-left">
+            <div class="section-dot" style="background:#6366f1;"></div>
+            <div>
+              <h2 class="news-section-title">Past Digests</h2>
+              <p class="news-section-sub">Your last 7 morning briefings</p>
+            </div>
+          </div>
+        </div>
+        <div class="history-grid" id="history-grid"></div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Sidebar overlay (mobile) -->
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" role="alert" aria-live="polite"></div>
+
+  <!-- Article Detail Modal -->
+  <div class="modal-overlay" id="article-modal-overlay">
+    <div class="modal article-modal" id="article-modal" role="dialog" aria-modal="true">
+      <button class="modal-close" id="article-modal-close">&times;</button>
+      <div id="article-modal-content"></div>
+    </div>
+  </div>
+
+  <script>function closeAllModals(){}</script>
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>

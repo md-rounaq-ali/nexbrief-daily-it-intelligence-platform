@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NexBrief Admin Panel</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/admin.css" />
+</head>
+<body class="admin-body">
+
+  <!-- Admin Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div>
+        <div class="sidebar-logo"><span class="logo-nex">Nex</span>Brief</div>
+        <div class="admin-badge-label">Admin Panel</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <button class="sidebar-link active" data-tab="overview" id="tab-overview">
+        <span class="nav-icon">📊</span> Overview
+      </button>
+      <button class="sidebar-link" data-tab="subscribers" id="tab-subscribers">
+        <span class="nav-icon">👥</span> Subscribers
+      </button>
+      <button class="sidebar-link" data-tab="digests" id="tab-digests">
+        <span class="nav-icon">📰</span> Digests
+      </button>
+      <button class="sidebar-link" data-tab="send" id="tab-send">
+        <span class="nav-icon">📧</span> Send Digest
+      </button>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="/dashboard" class="btn btn-ghost btn-sm btn-full">← Back to Dashboard</a>
+      <button class="btn btn-danger btn-sm btn-full" id="admin-logout-btn">🚪 Sign Out</button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content" id="main-content">
+
+    <!-- Mobile header -->
+    <header class="mobile-header" style="display:none;" id="mobile-admin-header">
+      <button class="hamburger" id="admin-hamburger">☰</button>
+      <div class="mobile-logo"><span class="logo-nex">Nex</span>Brief Admin</div>
+    </header>
+
+    <!-- ── Overview Tab ── -->
+    <div class="admin-tab active" id="panel-overview">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Admin Overview</h1>
+          <p class="page-date" id="admin-date">Loading...</p>
+        </div>
+        <div class="admin-user-chip" id="admin-user-chip">
+          <div class="user-avatar" id="admin-avatar">A</div>
+          <span id="admin-name">Admin</span>
+        </div>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid" id="stats-grid">
+        <div class="stat-card">
+          <div class="stat-card-icon" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);">👥</div>
+          <div class="stat-card-body">
+            <div class="stat-card-value" id="stat-total-users">—</div>
+            <div class="stat-card-label">Total Registered</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon" style="background:linear-gradient(135deg,#10b981,#059669);">✅</div>
+          <div class="stat-card-body">
+            <div class="stat-card-value" id="stat-subscribed">—</div>
+            <div class="stat-card-label">Active Subscribers</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706);">📬</div>
+          <div class="stat-card-body">
+            <div class="stat-card-value" id="stat-digests">—</div>
+            <div class="stat-card-label">Digests Sent</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon" style="background:linear-gradient(135deg,#ef4444,#dc2626);">❌</div>
+          <div class="stat-card-body">
+            <div class="stat-card-value" id="stat-unsubscribed">—</div>
+            <div class="stat-card-label">Unsubscribed</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Today Status -->
+      <div class="today-status" id="today-status">
+        <div class="today-status-icon" id="today-icon">⏳</div>
+        <div>
+          <div class="today-status-title" id="today-title">Checking today's digest...</div>
+          <div class="today-status-sub" id="today-sub">Please wait.</div>
+        </div>
+      </div>
+
+      <!-- Recent Digests -->
+      <div class="admin-section">
+        <h2 class="admin-section-title">Recent Digests</h2>
+        <div class="admin-table-wrap">
+          <table class="admin-table" id="recent-digests-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Recipients</th>
+                <th>Source</th>
+              </tr>
+            </thead>
+            <tbody id="recent-digests-body">
+              <tr><td colspan="4" style="text-align:center;color:var(--color-text-muted);padding:24px;">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Subscribers Tab ── -->
+    <div class="admin-tab hidden" id="panel-subscribers">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Subscribers</h1>
+          <p class="page-date">Manage all registered users</p>
+        </div>
+        <div class="filter-bar">
+          <button class="filter-btn active" data-filter="all" id="filter-all">All</button>
+          <button class="filter-btn" data-filter="subscribed" id="filter-subscribed">Subscribed</button>
+          <button class="filter-btn" data-filter="unsubscribed" id="filter-unsubscribed">Unsubscribed</button>
+        </div>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Status</th>
+              <th>Digests</th>
+              <th>Joined</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="subscribers-body">
+            <tr><td colspan="6" style="text-align:center;color:var(--color-text-muted);padding:24px;">Loading subscribers...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination" id="pagination"></div>
+    </div>
+
+    <!-- ── Digests Tab ── -->
+    <div class="admin-tab hidden" id="panel-digests">
+      <div class="page-header">
+        <h1 class="page-title">All Digests</h1>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Recipients</th>
+              <th>Trigger</th>
+              <th>Sent At</th>
+            </tr>
+          </thead>
+          <tbody id="digests-body">
+            <tr><td colspan="5" style="text-align:center;color:var(--color-text-muted);padding:24px;">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── Send Digest Tab ── -->
+    <div class="admin-tab hidden" id="panel-send">
+      <div class="page-header">
+        <h1 class="page-title">Send & Test</h1>
+      </div>
+      <div class="send-grid">
+        <!-- Manual Trigger -->
+        <div class="send-card">
+          <div class="send-card-icon">📬</div>
+          <h3>Send Today's Digest</h3>
+          <p>Manually trigger the daily digest right now. This will fetch the latest news and email all active subscribers.</p>
+          <div id="trigger-warning" class="send-warning hidden">
+            ⚠️ Today's digest has already been sent. Sending again will send a duplicate to all subscribers.
+          </div>
+          <button class="btn btn-primary" id="trigger-digest-btn">🚀 Send Now to All Subscribers</button>
+          <div class="send-result" id="trigger-result"></div>
+        </div>
+
+        <!-- Test Email -->
+        <div class="send-card">
+          <div class="send-card-icon">🧪</div>
+          <h3>Send Test Email</h3>
+          <p>Send a sample digest to a specific email address to preview the newsletter before the next scheduled send.</p>
+          <div class="form-group">
+            <label class="form-label" for="test-email-input">Test Email Address</label>
+            <input type="email" id="test-email-input" class="form-input" placeholder="test@example.com" />
+          </div>
+          <button class="btn btn-ghost" id="send-test-btn">📧 Send Test Email</button>
+          <div class="send-result" id="test-result"></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Sidebar overlay (mobile) -->
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" role="alert"></div>
+
+  <script src="/js/admin.js"></script>
+</body>
+</html>

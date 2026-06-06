@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NexBrief — Daily IT & Tech Intelligence for Engineers</title>
+  <meta name="description" content="NexBrief delivers 50% IT, 30% Education, 20% World news daily at 7AM IST. Built for B.Tech students and IT professionals. Free forever." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="/" class="nav-logo"><span class="logo-nex">Nex</span>Brief</a>
+      <div class="nav-actions">
+        <button class="btn btn-ghost" id="nav-login-btn">Sign In</button>
+        <button class="btn btn-primary" id="nav-register-btn">Get Started Free</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-bg">
+      <div class="hero-orb orb-1"></div>
+      <div class="hero-orb orb-2"></div>
+      <div class="hero-orb orb-3"></div>
+    </div>
+    <div class="container">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        Built for B.Tech Students & IT Professionals · 100% Free
+      </div>
+      <h1 class="hero-title">
+        Your Daily Tech Briefing.<br />
+        <span class="gradient-text">Curated for Engineers.</span>
+      </h1>
+      <p class="hero-subtitle">
+        NexBrief is India's first dedicated IT newsletter platform — <strong>50% IT & AI</strong>,
+        <strong>30% Education & Research</strong>, <strong>20% World News</strong>. Delivered at <strong>7 AM IST</strong>, every single morning.
+      </p>
+      <div class="hero-cta">
+        <button class="btn btn-primary btn-lg" id="hero-register-btn">
+          📧 Subscribe Free — Get Tomorrow's Digest
+        </button>
+        <button class="btn btn-ghost btn-lg" id="hero-login-btn">
+          Sign In to Dashboard →
+        </button>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <span class="stat-number" style="color:#818cf8;">50%</span>
+          <span class="stat-label">IT & Technology</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-number" style="color:#fbbf24;">30%</span>
+          <span class="stat-label">Education</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-number" style="color:#6ee7b7;">20%</span>
+          <span class="stat-label">World News</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-number">7 AM</span>
+          <span class="stat-label">IST Daily</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="features" id="features">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-badge">Why NexBrief?</div>
+        <h2 class="section-title">The Only Newsletter Built for IT Students</h2>
+        <p class="section-subtitle">No more generic news. Everything curated for your career.</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);">🔴</div>
+          <h3>50% IT & Technology</h3>
+          <p>AI, Machine Learning, Cybersecurity, Cloud Computing, and Software Development — the foundation of your career.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706);">📚</div>
+          <h3>30% Education & Research</h3>
+          <p>University news, B.Tech programs, EdTech updates, scholarships, and cutting-edge research relevant to students.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon" style="background:linear-gradient(135deg,#10b981,#059669);">🌐</div>
+          <h3>20% World Headlines</h3>
+          <p>Business, global events, and general news to keep you well-rounded and aware of the bigger picture.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon" style="background:linear-gradient(135deg,#3b82f6,#2563eb);">⏰</div>
+          <h3>7 AM IST Every Day</h3>
+          <p>Your digest arrives before your first class or office meeting — read it with your morning chai.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon" style="background:linear-gradient(135deg,#ef4444,#dc2626);">🖥️</div>
+          <h3>Interactive Dashboard</h3>
+          <p>Login anytime to browse the full digest, read articles in detail, and view your history.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon" style="background:linear-gradient(135deg,#06b6d4,#0891b2);">✨</div>
+          <h3>Completely Free</h3>
+          <p>No subscription fees, no ads, no credit card. NexBrief is built by engineers, for engineers.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       AUTH MODAL — Register / Login / Forgot Password
+  ═══════════════════════════════════════════════════════ -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal" id="auth-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <button class="modal-close" id="modal-close-btn" aria-label="Close">&times;</button>
+
+      <!-- Tab Switcher (hidden during forgot password flow) -->
+      <div class="modal-tabs" id="modal-tabs">
+        <button class="modal-tab active" id="tab-register">Create Account</button>
+        <button class="modal-tab" id="tab-login">Sign In</button>
+      </div>
+
+      <!-- ── Register Form ── -->
+      <div class="modal-form" id="form-register">
+        <div class="modal-header">
+          <div class="modal-logo"><span class="logo-nex">Nex</span>Brief</div>
+          <h2 id="modal-title" class="modal-title">Join NexBrief Free</h2>
+          <p class="modal-subtitle">Daily IT digest at 7 AM IST. Built for B.Tech students.</p>
+        </div>
+        <form id="register-form" novalidate>
+          <div class="form-group">
+            <label for="reg-name" class="form-label">Full Name</label>
+            <input type="text" id="reg-name" class="form-input" placeholder="e.g. Rounaq Ali" autocomplete="name" required />
+            <span class="field-error" id="reg-name-error"></span>
+          </div>
+          <div class="form-group">
+            <label for="reg-email" class="form-label">Email Address</label>
+            <input type="email" id="reg-email" class="form-input" placeholder="you@example.com" autocomplete="email" required />
+            <span class="field-error" id="reg-email-error"></span>
+          </div>
+          <div class="form-group">
+            <label for="reg-password" class="form-label">Password <span style="color:var(--color-text-faint);font-weight:400;">(min 6 characters)</span></label>
+            <div class="input-wrapper">
+              <input type="password" id="reg-password" class="form-input" placeholder="Create a strong password" autocomplete="new-password" required />
+              <button type="button" class="toggle-pw" id="toggle-reg-pw" aria-label="Toggle visibility">👁️</button>
+            </div>
+            <span class="field-error" id="reg-password-error"></span>
+          </div>
+          <div id="reg-server-error" class="server-error"></div>
+          <button type="submit" class="btn btn-primary btn-full" id="reg-submit-btn">
+            <span class="btn-text">🚀 Create Account & Subscribe</span>
+            <span class="btn-spinner hidden"></span>
+          </button>
+        </form>
+        <p class="modal-switch">Already have an account? <button class="link-btn" id="switch-to-login">Sign in here</button></p>
+      </div>
+
+      <!-- ── Register Step 2: Verify Email OTP ── -->
+      <div class="modal-form hidden" id="form-register-otp">
+        <div class="modal-header">
+          <div class="modal-logo"><span class="logo-nex">Nex</span>Brief</div>
+          <div class="forgot-step-badge" style="background:rgba(16,185,129,0.1);border-color:rgba(16,185,129,0.3);color:#6ee7b7;">Step 2 of 2 — Verify Email</div>
+          <h2 class="modal-title">Check Your Inbox</h2>
+          <p class="modal-subtitle">We sent a 6-digit code to <strong id="reg-otp-sent-to" style="color:var(--color-text);"></strong> — enter it below to activate your account.</p>
+        </div>
+        <form id="reg-otp-form" novalidate>
+          <div class="form-group">
+            <label class="form-label">6-Digit Verification Code</label>
+            <div class="otp-inputs" id="reg-otp-inputs">
+              <input type="text" class="otp-box reg-otp-box" maxlength="1" data-index="0" inputmode="numeric" pattern="[0-9]" aria-label="Digit 1" />
+              <input type="text" class="otp-box reg-otp-box" maxlength="1" data-index="1" inputmode="numeric" pattern="[0-9]" aria-label="Digit 2" />
+              <input type="text" class="otp-box reg-otp-box" maxlength="1" data-index="2" inputmode="numeric" pattern="[0-9]" aria-label="Digit 3" />
+              <input type="text" class="otp-box reg-otp-box" maxlength="1" data-index="3" inputmode="numeric" pattern="[0-9]" aria-label="Digit 4" />
+              <input type="text" class="otp-box reg-otp-box" maxlength="1" data-index="4" inputmode="numeric" pattern="[0-9]" aria-label="Digit 5" />
+              <input type="text" class="otp-box reg-otp-box" maxlength="1" data-index="5" inputmode="numeric" pattern="[0-9]" aria-label="Digit 6" />
+            </div>
+            <span class="field-error" id="reg-otp-error"></span>
+          </div>
+          <div class="otp-timer-row">
+            <span class="otp-timer">⏰ Expires in <strong id="reg-timer-countdown">10:00</strong></span>
+            <button type="button" class="link-btn" id="reg-resend-otp-btn">Resend Code</button>
+          </div>
+          <div id="reg-otp-server-error" class="server-error"></div>
+          <button type="submit" class="btn btn-primary btn-full" id="reg-otp-submit-btn">
+            <span class="btn-text">✅ Verify & Create Account</span>
+            <span class="btn-spinner hidden"></span>
+          </button>
+        </form>
+        <p class="modal-switch"><button class="link-btn" id="back-to-register-btn">← Edit Details</button></p>
+      </div>
+
+      <!-- ── Login Form ── -->
+      <div class="modal-form hidden" id="form-login">
+        <div class="modal-header">
+          <div class="modal-logo"><span class="logo-nex">Nex</span>Brief</div>
+          <h2 class="modal-title">Welcome Back</h2>
+          <p class="modal-subtitle">Sign in to access your personalized news dashboard.</p>
+        </div>
+        <form id="login-form" novalidate>
+          <div class="form-group">
+            <label for="login-email" class="form-label">Email Address</label>
+            <input type="email" id="login-email" class="form-input" placeholder="you@example.com" autocomplete="email" required />
+            <span class="field-error" id="login-email-error"></span>
+          </div>
+          <div class="form-group">
+            <label for="login-password" class="form-label">Password</label>
+            <div class="input-wrapper">
+              <input type="password" id="login-password" class="form-input" placeholder="Your password" autocomplete="current-password" required />
+              <button type="button" class="toggle-pw" id="toggle-login-pw" aria-label="Toggle visibility">👁️</button>
+            </div>
+            <span class="field-error" id="login-password-error"></span>
+          </div>
+          <div class="forgot-link-row">
+            <button type="button" class="link-btn forgot-link-btn" id="forgot-pw-btn">Forgot password?</button>
+          </div>
+          <div id="login-server-error" class="server-error"></div>
+          <button type="submit" class="btn btn-primary btn-full" id="login-submit-btn">
+            <span class="btn-text">Sign In →</span>
+            <span class="btn-spinner hidden"></span>
+          </button>
+        </form>
+        <p class="modal-switch">New here? <button class="link-btn" id="switch-to-register">Create a free account</button></p>
+      </div>
+
+      <!-- ── Forgot Password: Step 1 — Enter Email ── -->
+      <div class="modal-form hidden" id="form-forgot-1">
+        <div class="modal-header">
+          <div class="modal-logo"><span class="logo-nex">Nex</span>Brief</div>
+          <div class="forgot-step-badge">Step 1 of 3</div>
+          <h2 class="modal-title">Forgot Password</h2>
+          <p class="modal-subtitle">Enter your registered email to receive a 6-digit verification code.</p>
+        </div>
+        <form id="forgot-form-1" novalidate>
+          <div class="form-group">
+            <label for="forgot-email" class="form-label">Registered Email Address</label>
+            <input type="email" id="forgot-email" class="form-input" placeholder="you@example.com" autocomplete="email" required />
+            <span class="field-error" id="forgot-email-error"></span>
+          </div>
+          <div id="forgot-1-server-error" class="server-error"></div>
+          <button type="submit" class="btn btn-primary btn-full" id="forgot-1-submit-btn">
+            <span class="btn-text">📧 Send Verification Code</span>
+            <span class="btn-spinner hidden"></span>
+          </button>
+        </form>
+        <p class="modal-switch"><button class="link-btn" id="back-to-login-1">← Back to Sign In</button></p>
+      </div>
+
+      <!-- ── Forgot Password: Step 2 — Enter OTP ── -->
+      <div class="modal-form hidden" id="form-forgot-2">
+        <div class="modal-header">
+          <div class="modal-logo"><span class="logo-nex">Nex</span>Brief</div>
+          <div class="forgot-step-badge">Step 2 of 3</div>
+          <h2 class="modal-title">Enter Verification Code</h2>
+          <p class="modal-subtitle">We sent a 6-digit code to <strong id="otp-sent-to"></strong>. Check your inbox (and spam folder).</p>
+        </div>
+        <form id="forgot-form-2" novalidate>
+          <div class="form-group">
+            <label class="form-label">6-Digit Verification Code</label>
+            <div class="otp-inputs" id="otp-inputs">
+              <input type="text" class="otp-box" maxlength="1" data-index="0" inputmode="numeric" pattern="[0-9]" aria-label="Digit 1" />
+              <input type="text" class="otp-box" maxlength="1" data-index="1" inputmode="numeric" pattern="[0-9]" aria-label="Digit 2" />
+              <input type="text" class="otp-box" maxlength="1" data-index="2" inputmode="numeric" pattern="[0-9]" aria-label="Digit 3" />
+              <input type="text" class="otp-box" maxlength="1" data-index="3" inputmode="numeric" pattern="[0-9]" aria-label="Digit 4" />
+              <input type="text" class="otp-box" maxlength="1" data-index="4" inputmode="numeric" pattern="[0-9]" aria-label="Digit 5" />
+              <input type="text" class="otp-box" maxlength="1" data-index="5" inputmode="numeric" pattern="[0-9]" aria-label="Digit 6" />
+            </div>
+            <span class="field-error" id="otp-error"></span>
+          </div>
+          <div class="otp-timer-row">
+            <span id="otp-timer" class="otp-timer">⏰ Code expires in <strong id="timer-countdown">10:00</strong></span>
+            <button type="button" class="link-btn" id="resend-otp-btn">Resend Code</button>
+          </div>
+          <div id="forgot-2-server-error" class="server-error"></div>
+          <button type="submit" class="btn btn-primary btn-full" id="forgot-2-submit-btn">
+            <span class="btn-text">✅ Verify Code</span>
+            <span class="btn-spinner hidden"></span>
+          </button>
+        </form>
+        <p class="modal-switch"><button class="link-btn" id="back-to-forgot-1">← Change Email</button></p>
+      </div>
+
+      <!-- ── Forgot Password: Step 3 — New Password ── -->
+      <div class="modal-form hidden" id="form-forgot-3">
+        <div class="modal-header">
+          <div class="modal-logo"><span class="logo-nex">Nex</span>Brief</div>
+          <div class="forgot-step-badge success-step">✓ Code Verified</div>
+          <h2 class="modal-title">Create New Password</h2>
+          <p class="modal-subtitle">Choose a strong password for your NexBrief account.</p>
+        </div>
+        <form id="forgot-form-3" novalidate>
+          <div class="form-group">
+            <label for="new-password" class="form-label">New Password <span style="color:var(--color-text-faint);font-weight:400;">(min 6 characters)</span></label>
+            <div class="input-wrapper">
+              <input type="password" id="new-password" class="form-input" placeholder="Create a strong password" autocomplete="new-password" required />
+              <button type="button" class="toggle-pw" id="toggle-new-pw" aria-label="Toggle visibility">👁️</button>
+            </div>
+            <span class="field-error" id="new-password-error"></span>
+          </div>
+          <div class="form-group">
+            <label for="confirm-password" class="form-label">Confirm New Password</label>
+            <div class="input-wrapper">
+              <input type="password" id="confirm-password" class="form-input" placeholder="Re-enter your new password" autocomplete="new-password" required />
+              <button type="button" class="toggle-pw" id="toggle-confirm-pw" aria-label="Toggle visibility">👁️</button>
+            </div>
+            <span class="field-error" id="confirm-password-error"></span>
+          </div>
+          <div id="forgot-3-server-error" class="server-error"></div>
+          <button type="submit" class="btn btn-primary btn-full" id="forgot-3-submit-btn">
+            <span class="btn-text">🔐 Update Password</span>
+            <span class="btn-spinner hidden"></span>
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" role="alert" aria-live="polite"></div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="footer-logo"><span class="logo-nex">Nex</span>Brief</div>
+          <p>50% IT · 30% Education · 20% World. Daily at 7 AM IST. Built for B.Tech students & IT professionals.</p>
+        </div>
+        <div class="footer-links">
+          <a href="#features">Features</a>
+          <button class="link-btn footer-link-btn" id="footer-register-btn">Subscribe Free</button>
+          <button class="link-btn footer-link-btn" id="footer-login-btn">Sign In</button>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© <span id="footer-year"></span> NexBrief. All rights reserved. Made by <a href="https://md-rounaq-ali.netlify.app/" target="_blank" rel="noopener noreferrer" style="color:#818cf8; text-decoration: underline; font-weight: 500;">Md Rounaq Ali</a> for India's engineers.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>
