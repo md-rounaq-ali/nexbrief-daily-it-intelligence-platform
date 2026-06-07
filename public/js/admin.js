@@ -260,31 +260,56 @@ $('#trigger-digest-btn')?.addEventListener('click', async () => {
   const btn = $('#trigger-digest-btn');
   const result = $('#trigger-result');
   btn.disabled = true;
-  btn.textContent = '⏳ Sending...';
-  result.textContent = '';
   result.className = 'send-result';
 
   try {
+    // Step 1: Wake up the Render server first (free tier sleeps after 15 min)
+    btn.textContent = '⏳ Waking up server...';
+    result.textContent = '🔄 Starting server (this may take up to 60 seconds on free hosting)...';
+    try {
+      await fetch(`${API_BASE}/health`, { method: 'GET' });
+    } catch (e) { /* ignore wake-up errors */ }
+
+    // Step 2: Wait 5 seconds for server to fully initialize
+    await new Promise(r => setTimeout(r, 5000));
+
+    // Step 3: Send the digest
+    btn.textContent = '📧 Sending digest...';
+    result.textContent = '📬 Fetching news and sending emails...';
+
+    // Use AbortController for 120 second timeout (Render cold start can be slow)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 120000);
+
     const res = await fetch(`${API_BASE}/newsletter/trigger`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ secretKey: '' }), // Admin JWT is verified on server
+      body: JSON.stringify({}),
+      signal: controller.signal,
     });
+    clearTimeout(timeoutId);
+
     const data = await res.json();
     if (data.success) {
-      const r = data.result;
-      if (r.skipped) {
-        result.textContent = `⚠️ Skipped: ${r.reason}`;
-      } else {
-        result.textContent = `✅ Digest sent! ${r.sentTo} emails delivered, ${r.failed} failed.`;
+      if (data.status === 'skipped') {
+        result.textContent = `⚠️ Skipped: ${data.reason || 'Already sent today.'}`;
+      } else if (data.status === 'sent') {
+        result.textContent = `✅ Digest sent! ${data.sentTo} emails delivered, ${data.failed} failed.`;
         loadStats();
+      } else {
+        result.textContent = `❌ Send failed. Check your Brevo API key.`;
+        result.className = 'send-result error-text';
       }
     } else {
       result.textContent = `❌ Error: ${data.message}`;
       result.className = 'send-result error-text';
     }
   } catch (err) {
-    result.textContent = '❌ Network error. Please try again.';
+    if (err.name === 'AbortError') {
+      result.textContent = '⏰ Request timed out. Render server may still be waking up. Wait 1 minute and try again.';
+    } else {
+      result.textContent = '❌ Network error. Check your internet connection and try again.';
+    }
     result.className = 'send-result error-text';
   } finally {
     btn.disabled = false;
