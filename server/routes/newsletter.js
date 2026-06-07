@@ -33,7 +33,7 @@ router.post('/trigger', async (req, res) => {
       return res.status(403).json({ success: false, message: 'Unauthorized.' });
     }
 
-    const result = await runDailyDigest('cron-job');
+    const result = await runDailyDigest('manual');
 
     // Return only a lightweight summary — NOT the full digest articles
     // (cron-job.org fails with "output too large" if full article data is returned)
