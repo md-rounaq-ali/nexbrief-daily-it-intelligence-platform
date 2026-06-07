@@ -12,6 +12,13 @@
 </head>
 <body class="admin-body">
 
+  <!-- Mobile Header (outside sidebar + main for correct stacking) -->
+  <header class="mobile-header" id="mobile-admin-header">
+    <button class="hamburger" id="admin-hamburger" aria-label="Open menu">☰</button>
+    <div class="mobile-logo"><span class="logo-nex">Nex</span>Brief Admin</div>
+    <div style="width:34px;"></div>
+  </header>
+
   <!-- Admin Sidebar -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
@@ -19,6 +26,7 @@
         <div class="sidebar-logo"><span class="logo-nex">Nex</span>Brief</div>
         <div class="admin-badge-label">Admin Panel</div>
       </div>
+      <button class="sidebar-close" id="sidebar-close" aria-label="Close menu">✕</button>
     </div>
     <nav class="sidebar-nav">
       <button class="sidebar-link active" data-tab="overview" id="tab-overview">
@@ -40,14 +48,11 @@
     </div>
   </aside>
 
+  <!-- Sidebar overlay (mobile) -->
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
   <!-- Main Content -->
   <main class="main-content" id="main-content">
-
-    <!-- Mobile header -->
-    <header class="mobile-header" style="display:none;" id="mobile-admin-header">
-      <button class="hamburger" id="admin-hamburger">☰</button>
-      <div class="mobile-logo"><span class="logo-nex">Nex</span>Brief Admin</div>
-    </header>
 
     <!-- ── Overview Tab ── -->
     <div class="admin-tab active" id="panel-overview">
@@ -183,7 +188,7 @@
     <!-- ── Send Digest Tab ── -->
     <div class="admin-tab hidden" id="panel-send">
       <div class="page-header">
-        <h1 class="page-title">Send & Test</h1>
+        <h1 class="page-title">Send &amp; Test</h1>
       </div>
       <div class="send-grid">
         <!-- Manual Trigger -->
@@ -214,9 +219,6 @@
     </div>
 
   </main>
-
-  <!-- Sidebar overlay (mobile) -->
-  <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
   <!-- Toast -->
   <div class="toast" id="toast" role="alert"></div>

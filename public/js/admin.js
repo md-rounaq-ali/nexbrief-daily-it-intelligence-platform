@@ -47,8 +47,19 @@ const switchAdminTab = (tab) => {
 };
 
 tabs.forEach(tab => {
-  $(`#tab-${tab}`)?.addEventListener('click', () => switchAdminTab(tab));
+  $(`#tab-${tab}`)?.addEventListener('click', () => {
+    switchAdminTab(tab);
+    closeSidebar(); // close on mobile after tab click
+  });
 });
+
+// ── Sidebar (mobile) ──────────────────────────────────────────────────────────
+const openSidebar  = () => { $('#sidebar')?.classList.add('open'); $('#sidebar-overlay')?.classList.add('active'); document.body.style.overflow = 'hidden'; };
+const closeSidebar = () => { $('#sidebar')?.classList.remove('open'); $('#sidebar-overlay')?.classList.remove('active'); document.body.style.overflow = ''; };
+$('#admin-hamburger')?.addEventListener('click', openSidebar);
+$('#sidebar-close')?.addEventListener('click', closeSidebar);
+$('#sidebar-overlay')?.addEventListener('click', closeSidebar);
+
 
 // ── Load Stats ────────────────────────────────────────────────────────────────
 const loadStats = async () => {
