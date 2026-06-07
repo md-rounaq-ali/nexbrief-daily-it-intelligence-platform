@@ -258,7 +258,8 @@
 /* ── Sidebar (shared with dashboard) ── */
 .sidebar {
   width: 240px;
-  min-height: 100vh;
+  height: 100vh;
+  height: 100dvh; /* dynamic viewport height — accounts for mobile browser UI bar */
   background: var(--color-surface-2);
   border-right: 1px solid var(--color-border);
   display: flex;
@@ -269,6 +270,7 @@
   z-index: 600;
   transition: transform var(--transition);
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch; /* smooth scroll on iOS */
 }
 .sidebar-header {
   padding: 22px 18px 18px;
@@ -379,6 +381,8 @@
   .sidebar {
     transform: translateX(-100%);
     z-index: 700;
+    /* iOS safe area padding for notch/home bar */
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
   .sidebar.open { transform: translateX(0); }
   .sidebar-close { display: flex; }
