@@ -33,8 +33,18 @@ router.post('/trigger', async (req, res) => {
       return res.status(403).json({ success: false, message: 'Unauthorized.' });
     }
 
-    const result = await runDailyDigest('manual');
-    res.json({ success: true, result });
+    const result = await runDailyDigest('cron-job');
+
+    // Return only a lightweight summary — NOT the full digest articles
+    // (cron-job.org fails with "output too large" if full article data is returned)
+    res.json({
+      success: true,
+      status: result.skipped ? 'skipped' : (result.success ? 'sent' : 'failed'),
+      sentTo: result.sentTo || 0,
+      failed: result.failed || 0,
+      reason: result.reason || null,
+      timestamp: new Date().toISOString(),
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
