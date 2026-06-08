@@ -4,6 +4,28 @@ const NEWS_API_KEY = process.env.NEWS_API_KEY;
 const BASE_URL = 'https://newsapi.org/v2';
 
 /**
+ * Premium royalty-free stock images from Unsplash to ensure the platform
+ * always looks highly professional and never shows empty gray placeholder blocks.
+ */
+const categoryStockImages = {
+  AI: 'https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=600&q=80',
+  Cybersecurity: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=600&q=80',
+  Software: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=600&q=80',
+  Cloud: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=600&q=80',
+  IT: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80',
+  Technology: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=600&q=80',
+  Science: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=600&q=80',
+  Education: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=600&q=80',
+  Research: 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=600&q=80',
+  Business: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&q=80',
+  General: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=600&q=80'
+};
+
+const getCategoryStockImage = (category) => {
+  return categoryStockImages[category] || categoryStockImages.General;
+};
+
+/**
  * Helper to fetch articles safely from NewsAPI with error handling
  */
 const safeFetchArticles = async (url) => {
@@ -72,14 +94,16 @@ const mixIndiaAndWorld = (liveArticles, min, max, categorizeFn, fallbackFn) => {
     seenUrls.add(a.url);
     seenTitles.add(titleNorm);
 
+    const cat = categorizeFn(a.title + ' ' + (a.description || ''));
+
     uniqueLive.push({
       title: a.title,
       description: a.description || 'Click to read the full article.',
       url: a.url,
-      urlToImage: a.urlToImage || null,
+      urlToImage: a.urlToImage || getCategoryStockImage(cat),
       source: a.source?.name || 'News Source',
       publishedAt: a.publishedAt || new Date().toISOString(),
-      category: categorizeFn(a.title + ' ' + (a.description || '')),
+      category: cat,
       isIndia: isIndiaRelated(a.title, a.description, a.source?.name)
     });
   }
@@ -269,7 +293,10 @@ const getFallbackITNews = (count) => {
     { title: 'Next.js 15 Introduces Stable Turbopack Compiler and Faster Development Live Reloads', description: 'Vercel’s Next.js 15 update is live, packaging the Rust-based Turbopack compiler, updated caching strategies, and seamless integration with React Server Actions.', url: 'https://nextjs.org/blog', source: 'Vercel Blog', category: 'Software', publishedAt: new Date().toISOString(), urlToImage: null, isIndia: false },
     { title: 'Indian Tech Startups Defy Global Winter by Securing $2.5B in Q2 AI Infrastructure Funding', description: 'VC investment reports highlight a major funding surge for Indian SaaS and AI development firms, proving strong local demand for advanced product engineering.', url: 'https://www.livemint.com', source: 'LiveMint', category: 'Technology', publishedAt: new Date().toISOString(), urlToImage: null, isIndia: true }
   ];
-  return fallbacks.slice(0, count);
+  return fallbacks.map(f => ({
+    ...f,
+    urlToImage: f.urlToImage || getCategoryStockImage(f.category)
+  })).slice(0, count);
 };
 
 /**
@@ -290,7 +317,10 @@ const getFallbackEducationNews = (count) => {
     { title: 'IIT Delhi Collaborates with Global Universities on Clean-Tech Hydrogen Fuel Cells', description: 'In a bid to drive green energy research, IIT Delhi has launched joint labs with global institutions to engineer commercial-grade hydrogen fuels.', url: 'https://www.indianexpress.com', source: 'Indian Express', category: 'Science', publishedAt: new Date().toISOString(), urlToImage: null, isIndia: true },
     { title: 'GATE Preparation Tips: Best Strategies to Crack Computer Science and Systems Design Paper', description: 'Top educators share comprehensive test-taking plans, critical programming sections, and time-management strategies for GATE computer science candidates.', url: 'https://www.timesofindia.com', source: 'Times of India', category: 'Education', publishedAt: new Date().toISOString(), urlToImage: null, isIndia: true }
   ];
-  return fallbacks.slice(0, count);
+  return fallbacks.map(f => ({
+    ...f,
+    urlToImage: f.urlToImage || getCategoryStockImage(f.category)
+  })).slice(0, count);
 };
 
 /**
@@ -307,7 +337,10 @@ const getFallbackGeneralNews = (count) => {
     { title: 'India Digital Economy expected to Contribute 20% of National GDP by Next Fiscal Year', description: 'Economists report that digital services, domestic electronics manufacturing, and software exports are driving the next wave of Indian national development.', url: 'https://www.moneycontrol.com', source: 'MoneyControl', category: 'General', publishedAt: new Date().toISOString(), urlToImage: null, isIndia: true },
     { title: 'Global Supply Chain Routes Adapt with Shorter Ocean Transits to Combat Delays', description: 'Geopolitical canal route adjustments have prompted cargo conglomerates to optimize maritime routes, ensuring fast transit for global trade hubs.', url: 'https://www.ft.com', source: 'Financial Times', category: 'General', publishedAt: new Date().toISOString(), urlToImage: null, isIndia: false }
   ];
-  return fallbacks.slice(0, count);
+  return fallbacks.map(f => ({
+    ...f,
+    urlToImage: f.urlToImage || getCategoryStockImage(f.category)
+  })).slice(0, count);
 };
 
 /**
