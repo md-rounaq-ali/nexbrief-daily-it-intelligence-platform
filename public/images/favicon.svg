@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- Glowing 3D gradient paper plane representing modern newsletter delivery -->
+  <path d="M28 4L4 14L12 18L28 4Z" fill="url(#plane-grad-top)"/>
+  <path d="M28 4L12 18L15 25L18 20L28 4Z" fill="url(#plane-grad-side)"/>
+  <path d="M12 18L18 20L28 4L12 18Z" fill="url(#plane-grad-accent)" opacity="0.9"/>
+  <defs>
+    <linearGradient id="plane-grad-top" x1="4" y1="4" x2="28" y2="18" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#a5b4fc"/>
+      <stop offset="50%" stop-color="#818cf8"/>
+      <stop offset="100%" stop-color="#6366f1"/>
+    </linearGradient>
+    <linearGradient id="plane-grad-side" x1="12" y1="4" x2="28" y2="25" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4f46e5"/>
+      <stop offset="100%" stop-color="#3730a3"/>
+    </linearGradient>
+    <linearGradient id="plane-grad-accent" x1="12" y1="18" x2="28" y2="4" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#60a5fa"/>
+      <stop offset="100%" stop-color="#3b82f6"/>
+    </linearGradient>
+  </defs>
+</svg>
