@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /admin
+Disallow: /api/
+
+Sitemap: https://nexbrief-news.onrender.com/sitemap.xml
