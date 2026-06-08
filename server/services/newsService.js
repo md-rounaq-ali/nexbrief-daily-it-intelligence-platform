@@ -45,15 +45,15 @@ const isIndiaRelated = (title, description, source) => {
 };
 
 /**
- * Process, filter, categorize, and prioritize India-focused articles
+ * Mixes live articles and fallback articles dynamically:
+ * - Dynamic count determined between min and max based on live news availability.
+ * - Enforces exactly 60% India-related articles and 40% Global articles.
+ * - Automatically fills shortage with high-quality category-specific fallbacks.
+ * - Sorts so that India-focused articles appear at the top.
  */
-const processAndMixArticles = (articles, count, categorizeFn, fallbackFn) => {
-  if (!articles || articles.length === 0) {
-    return fallbackFn(count);
-  }
-
-  // Filter out removed or incomplete articles
-  const cleanArticles = articles.filter(a => 
+const mixIndiaAndWorld = (liveArticles, min, max, categorizeFn, fallbackFn) => {
+  // Clean and filter out removed or incomplete articles
+  const cleanArticles = (liveArticles || []).filter(a => 
     a.title && 
     a.title !== '[Removed]' && 
     a.description && 
@@ -64,7 +64,7 @@ const processAndMixArticles = (articles, count, categorizeFn, fallbackFn) => {
   // Map and deduplicate by URL or Title
   const seenUrls = new Set();
   const seenTitles = new Set();
-  const mapped = [];
+  const uniqueLive = [];
 
   for (const a of cleanArticles) {
     const titleNorm = a.title.toLowerCase().trim();
@@ -72,7 +72,7 @@ const processAndMixArticles = (articles, count, categorizeFn, fallbackFn) => {
     seenUrls.add(a.url);
     seenTitles.add(titleNorm);
 
-    mapped.push({
+    uniqueLive.push({
       title: a.title,
       description: a.description || 'Click to read the full article.',
       url: a.url,
@@ -84,36 +84,74 @@ const processAndMixArticles = (articles, count, categorizeFn, fallbackFn) => {
     });
   }
 
-  // Sort: India-related first, then global
-  mapped.sort((a, b) => {
-    if (a.isIndia && !b.isIndia) return -1;
-    if (!a.isIndia && b.isIndia) return 1;
-    return new Date(b.publishedAt) - new Date(a.publishedAt); // newer first
-  });
+  // Split live unique articles into India and World pools
+  const liveIndia = uniqueLive.filter(a => a.isIndia);
+  const liveWorld = uniqueLive.filter(a => !a.isIndia);
 
-  // If we don't have enough articles, backfill with fallbacks
-  if (mapped.length < count) {
-    const fallbacks = fallbackFn(count * 2);
-    for (const fb of fallbacks) {
-      if (mapped.length >= count) break;
-      const fbTitleNorm = fb.title.toLowerCase().trim();
-      if (!seenTitles.has(fbTitleNorm)) {
-        seenTitles.add(fbTitleNorm);
-        mapped.push(fb);
-      }
+  // Decide the dynamic count C (between min and max based on total live unique news)
+  let C = uniqueLive.length;
+  if (C < min) C = min;
+  if (C > max) C = max;
+
+  // Calculate target counts for exactly 60% India and 40% World
+  const targetIndiaCount = Math.round(C * 0.6);
+  const targetWorldCount = C - targetIndiaCount;
+
+  // Get a large pool of fallback articles
+  const allFallbacks = fallbackFn(50);
+  const fallbackIndia = allFallbacks.filter(f => f.isIndia);
+  const fallbackWorld = allFallbacks.filter(f => !f.isIndia);
+
+  const finalIndia = [];
+  const finalWorld = [];
+
+  // Fill India articles (live first, then fallback)
+  for (const a of liveIndia) {
+    if (finalIndia.length >= targetIndiaCount) break;
+    finalIndia.push(a);
+  }
+  for (const f of fallbackIndia) {
+    if (finalIndia.length >= targetIndiaCount) break;
+    const titleNorm = f.title.toLowerCase().trim();
+    if (!seenTitles.has(titleNorm)) {
+      seenTitles.add(titleNorm);
+      finalIndia.push(f);
     }
   }
 
-  return mapped.slice(0, count);
+  // Fill World articles (live first, then fallback)
+  for (const a of liveWorld) {
+    if (finalWorld.length >= targetWorldCount) break;
+    finalWorld.push(a);
+  }
+  for (const f of fallbackWorld) {
+    if (finalWorld.length >= targetWorldCount) break;
+    const titleNorm = f.title.toLowerCase().trim();
+    if (!seenTitles.has(titleNorm)) {
+      seenTitles.add(titleNorm);
+      finalWorld.push(f);
+    }
+  }
+
+  // Combine pools
+  const combined = [...finalIndia, ...finalWorld];
+
+  // Sort: India-related first, then global
+  combined.sort((a, b) => {
+    if (a.isIndia && !b.isIndia) return -1;
+    if (!a.isIndia && b.isIndia) return 1;
+    return new Date(b.publishedAt) - new Date(a.publishedAt); // newer first within the same region
+  });
+
+  return combined;
 };
 
 /**
  * Fetch IT-sector news (Career, company updates, frameworks, programming focus)
- * Target: 15 to 20 articles (default: 18)
+ * Dynamic count between 10 (min) and 20 (max)
  */
-const fetchITNews = async (count = 18) => {
+const fetchITNews = async () => {
   try {
-    // Endpoints: India Technology, Global Technology, and focused Everything search
     const indiaTechUrl = `${BASE_URL}/top-headlines?category=technology&country=in&pageSize=20&apiKey=${NEWS_API_KEY}`;
     const globalTechUrl = `${BASE_URL}/top-headlines?category=technology&language=en&pageSize=25&apiKey=${NEWS_API_KEY}`;
     
@@ -127,18 +165,18 @@ const fetchITNews = async (count = 18) => {
     ]);
 
     const combined = [...indiaTech, ...globalTech, ...searchTech];
-    return processAndMixArticles(combined, count, categorizeIT, getFallbackITNews);
+    return mixIndiaAndWorld(combined, 10, 20, categorizeIT, getFallbackITNews);
   } catch (error) {
     console.error('Error fetching IT news:', error.message);
-    return getFallbackITNews(count);
+    return getFallbackITNews(10);
   }
 };
 
 /**
  * Fetch Education-related news (B.Tech, science, engineering exams, university research focus)
- * Target: 9 to 12 articles (default: 10)
+ * Dynamic count between 6 (min) and 12 (max)
  */
-const fetchEducationNews = async (count = 10) => {
+const fetchEducationNews = async () => {
   try {
     const indiaScienceUrl = `${BASE_URL}/top-headlines?category=science&country=in&pageSize=15&apiKey=${NEWS_API_KEY}`;
     const globalScienceUrl = `${BASE_URL}/top-headlines?category=science&language=en&pageSize=20&apiKey=${NEWS_API_KEY}`;
@@ -153,18 +191,18 @@ const fetchEducationNews = async (count = 10) => {
     ]);
 
     const combined = [...indiaSci, ...globalSci, ...searchEdu];
-    return processAndMixArticles(combined, count, categorizeEducation, getFallbackEducationNews);
+    return mixIndiaAndWorld(combined, 6, 12, categorizeEducation, getFallbackEducationNews);
   } catch (error) {
     console.error('Error fetching Education news:', error.message);
-    return getFallbackEducationNews(count);
+    return getFallbackEducationNews(6);
   }
 };
 
 /**
  * Fetch General / Other news (World news, Business, UPI/RBI, global economy focus)
- * Target: 6 to 8 articles (default: 6)
+ * Dynamic count between 4 (min) and 8 (max)
  */
-const fetchGeneralNews = async (count = 6) => {
+const fetchGeneralNews = async () => {
   try {
     const indiaBusinessUrl = `${BASE_URL}/top-headlines?category=business&country=in&pageSize=15&apiKey=${NEWS_API_KEY}`;
     const globalBusinessUrl = `${BASE_URL}/top-headlines?category=business&language=en&pageSize=15&apiKey=${NEWS_API_KEY}`;
@@ -175,10 +213,10 @@ const fetchGeneralNews = async (count = 6) => {
     ]);
 
     const combined = [...indiaBus, ...globalBus];
-    return processAndMixArticles(combined, count, () => 'General', getFallbackGeneralNews);
+    return mixIndiaAndWorld(combined, 4, 8, () => 'General', getFallbackGeneralNews);
   } catch (error) {
     console.error('Error fetching General news:', error.message);
-    return getFallbackGeneralNews(count);
+    return getFallbackGeneralNews(4);
   }
 };
 
@@ -273,16 +311,16 @@ const getFallbackGeneralNews = (count) => {
 };
 
 /**
- * Fetch ALL news for daily digest — 50% IT, 30% Education, 20% General
- * Total: 34 articles → 18 IT + 10 Education + 6 General
+ * Fetch ALL news for daily digest
+ * Counts are dynamically fetched and balanced on 60/40 India/World ratio
  */
 const fetchAllNewsForDigest = async () => {
-  console.log('📰 Fetching news: 18 IT + 10 Education + 6 General (India priority)...');
+  console.log('📰 Fetching news: Dynamic ranges (60% India / 40% World)...');
 
   const [itNews, educationNews, generalNews] = await Promise.all([
-    fetchITNews(18),       // ~50% of 34 articles
-    fetchEducationNews(10), // ~30% of 34 articles
-    fetchGeneralNews(6),   // ~20% of 34 articles
+    fetchITNews(),
+    fetchEducationNews(),
+    fetchGeneralNews(),
   ]);
 
   console.log(`   IT: ${itNews.length} | Education: ${educationNews.length} | General: ${generalNews.length}`);
