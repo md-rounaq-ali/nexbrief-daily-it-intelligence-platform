@@ -1,0 +1,91 @@
+1
+00:00:00,000 --> 00:00:09,000
+Hi everyone!
+
+2
+00:00:10,000 --> 00:00:14,000
+Excited to share my latest full-stack project: NexBrief.
+
+3
+00:00:15,000 --> 00:00:20,000
+Welcome to NexBrief — India's first dedicated daily IT newsletter platform.
+
+4
+00:00:21,000 --> 00:00:28,000
+Let's start by exploring the landing page of the application.
+
+5
+00:00:29,000 --> 00:00:44,000
+If you attempt to sign in with an unregistered email, the system will prompt you to create an account first.
+
+6
+00:00:45,000 --> 00:01:22,000
+To register, simply enter your details. A secure 6-digit verification code will be sent to your email to activate your account.
+
+7
+00:01:23,000 --> 00:01:41,000
+Entering an incorrect password will block the login attempt, ensuring secure access control.
+
+8
+00:01:42,000 --> 00:02:18,000
+If you forget your password, you can securely reset it using a verification code sent to your registered inbox.
+
+9
+00:02:19,000 --> 00:02:28,000
+Once verified and updated, you can log in to your account with your new credentials.
+
+10
+00:02:29,000 --> 00:02:44,000
+Welcome to the Dashboard — a modern, glassmorphic interface featuring curated IT, Education, and World News.
+
+11
+00:02:45,000 --> 00:02:54,000
+Clicking on any news card opens a modal displaying full details and a direct link to the original source.
+
+12
+00:02:55,000 --> 00:03:02,000
+I know we rarely have time to log in daily just to search for and read the latest tech updates.
+
+13
+00:03:03,000 --> 00:03:09,000
+To solve this, registering on the platform automatically activates your daily morning newsletter subscription.
+
+14
+00:03:10,000 --> 00:03:14,000
+Every single morning at exactly 7:00 AM IST, the latest news is delivered directly to your inbox.
+
+15
+00:03:15,000 --> 00:03:32,000
+The email presents the headlines and bulleted summaries so you can stay fully informed in just 2 to 5 minutes.
+
+16
+00:03:33,000 --> 00:03:41,000
+If you prefer reading on the dashboard and want to stop the daily emails, you can pause your digest from your settings.
+
+17
+00:03:42,000 --> 00:03:52,000
+Alternatively, you can easily unsubscribe directly from the link provided at the bottom of the emails.
+
+18
+00:03:53,000 --> 00:04:04,000
+Let's look at the Admin Panel. Admins have a comprehensive overview of active subscribers and past digests.
+
+19
+00:04:05,000 --> 00:04:11,000
+From here, admins can manually trigger and send digests to all subscribers with one click.
+
+20
+00:04:12,000 --> 00:04:27,000
+Admins also have the privileges to make other users admins or permanently delete accounts.
+
+21
+00:04:28,000 --> 00:04:49,000
+Security first: all passwords are encrypted and securely stored, so you can sign up with complete peace of mind.
+
+22
+00:04:50,000 --> 00:04:54,000
+If you like this project, please star the GitHub repository, share this post, and join NexBrief today!
+
+23
+00:04:55,000 --> 00:04:57,000
+Thank you for watching!
