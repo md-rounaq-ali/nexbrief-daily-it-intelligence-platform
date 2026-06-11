@@ -10,6 +10,10 @@
 </p>
 
 <p align="center">
+  📖 <strong>Read the full technical architecture and design write-up on <a href="https://dev.to/mdrounaqali/how-i-built-nexbrief-an-automated-daily-it-newsletter-platform-for-engineering-students-3b57" target="_blank">Dev.to</a>!</strong>
+</p>
+
+<p align="center">
   <a href="https://nexbrief-news.onrender.com" target="_blank">
     <img src="https://img.shields.io/badge/Live%20Demo-Online-brightgreen?style=for-the-badge&logo=render&logoColor=white" alt="Live Demo" />
   </a>
