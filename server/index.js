@@ -37,6 +37,18 @@ app.get('/dashboard', (req, res) => {
 app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/admin.html'));
 });
+// Serve favicon explicitly so Google's favicon crawler gets the real image
+// (without this, the catch-all '*' route returns index.html for /favicon.ico)
+app.get('/favicon.ico', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/images/favicon.png'));
+});
+app.get('/favicon.png', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/images/favicon.png'));
+});
+app.get('/favicon.svg', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/images/favicon.svg'));
+});
+
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
