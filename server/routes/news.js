@@ -17,7 +17,7 @@ router.get('/today', protect, async (req, res) => {
       return res.json({ success: true, source: 'cache', digest });
     }
 
-    // Fetch fresh news
+    // Fetch fresh news (with built-in dedup against last 3 digests)
     const { itNews, educationNews, generalNews } = await fetchAllNewsForDigest();
 
     if (!digest) {

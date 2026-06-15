@@ -5,8 +5,8 @@ const { fetchAllNewsForDigest } = require('../services/newsService');
 const { sendDailyDigest } = require('../services/emailService');
 
 /**
- * Run the daily digest: fetch news (50% IT / 30% Education / 20% General)
- * → save to DB → send to all active subscribers
+ * Run the daily digest: fetch FRESH news (50% IT / 30% Education / 20% General)
+ * → deduplicate against last 3 days → save to DB → send to all active subscribers
  */
 const runDailyDigest = async (triggerSource = 'cron') => {
   const today = new Date().toISOString().split('T')[0];
@@ -20,9 +20,9 @@ const runDailyDigest = async (triggerSource = 'cron') => {
       return { skipped: true, reason: 'Already sent today.' };
     }
 
-    // Fetch news: 50% IT + 30% Education + 20% General
+    // Fetch FRESH news (with dedup against last 3 digests built-in)
     const { itNews, educationNews, generalNews } = await fetchAllNewsForDigest();
-    console.log(`📰 News: IT=${itNews.length} | Education=${educationNews.length} | General=${generalNews.length}`);
+    console.log(`📰 Fresh News: IT=${itNews.length} | Education=${educationNews.length} | General=${generalNews.length}`);
 
     // Save digest to DB
     let digest = existing || new Digest({ date: today });
@@ -71,6 +71,8 @@ const startDailyDigestJob = () => {
   }, { timezone: 'UTC' });
 
   console.log('⏰ Daily digest scheduled: 7:00 AM IST (01:30 UTC) | Format: 50% IT / 30% Education / 20% General');
+  console.log('   🔄 Dedup: Articles from last 3 digests are automatically excluded');
+  console.log('   🏢 IT Priority: Jobs/Internships → AI → Frameworks → Cybersecurity → Cloud');
 };
 
 module.exports = { startDailyDigestJob, runDailyDigest };

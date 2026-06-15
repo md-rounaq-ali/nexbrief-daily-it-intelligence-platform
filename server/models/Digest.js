@@ -9,7 +9,7 @@ const ArticleSchema = new mongoose.Schema({
   publishedAt: Date,
   category: {
     type: String,
-    enum: ['IT', 'AI', 'Cybersecurity', 'Software', 'Cloud', 'Technology', 'Science', 'Education', 'Research', 'Business', 'General'],
+    enum: ['IT', 'AI', 'Cybersecurity', 'Software', 'Cloud', 'Technology', 'Science', 'Education', 'Research', 'Business', 'General', 'Jobs'],
   },
 });
 
