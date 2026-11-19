@@ -464,3 +464,13 @@ window.addEventListener('scroll', () => {
 // ── Footer year ───────────────────────────────────────────────────────────────
 const fyEl = $('#footer-year');
 if (fyEl) fyEl.textContent = new Date().getFullYear();
+
+// ── FAQ Accordion ─────────────────────────────────────────────────────────────
+$$('.faq-question').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    const item = btn.closest('.faq-item');
+    const wasActive = item.classList.contains('active');
+    $$('.faq-item').forEach(i => i.classList.remove('active'));
+    if (!wasActive) item.classList.add('active');
+  });
+});
