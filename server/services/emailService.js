@@ -53,6 +53,30 @@ const sendEmailViaAPI = async ({ toEmail, toName, subject, htmlContent }) => {
   }
 };
 
+/**
+ * Ensures an email is unblocked on Brevo Transactional Blocklist.
+ * If a user previously clicked "Unsubscribe" in their email client (like Gmail),
+ * Brevo blocks all future transactional emails (including OTPs).
+ * Calling this removes the block so OTPs and newsletters can be received.
+ */
+const unblockEmailIfBlocked = async (email) => {
+  if (!email || !BREVO_API_KEY) return;
+  try {
+    const res = await fetch(`https://api.brevo.com/v3/smtp/blockedContacts/${encodeURIComponent(email.toLowerCase().trim())}`, {
+      method: 'DELETE',
+      headers: {
+        'api-key': BREVO_API_KEY,
+        'accept': 'application/json',
+      },
+    });
+    if (res.status === 204) {
+      console.log(`🔓 Auto-unblocked ${email} from Brevo transactional blocklist.`);
+    }
+  } catch (err) {
+    // Non-blocking; continue sending email
+  }
+};
+
 // ─── Daily Digest Email Template ──────────────────────────────────────────────
 const formatDescriptionToBullets = (desc) => {
   if (!desc) return '';
@@ -282,6 +306,7 @@ const sendWelcomeEmail = async (user) => {
 };
 
 const sendRegistrationOTPEmail = async (name, email, otp) => {
+  await unblockEmailIfBlocked(email);
   await sendEmailViaAPI({
     toEmail: email,
     toName: name,
@@ -292,6 +317,7 @@ const sendRegistrationOTPEmail = async (name, email, otp) => {
 };
 
 const sendOTPEmail = async (user, otp) => {
+  await unblockEmailIfBlocked(user.email);
   await sendEmailViaAPI({
     toEmail: user.email,
     toName: user.name,
@@ -337,4 +363,11 @@ const sendTestEmail = async (toEmail, digest) => {
   console.log(`✅ Test digest email sent via API → ${toEmail}`);
 };
 
-module.exports = { sendWelcomeEmail, sendRegistrationOTPEmail, sendOTPEmail, sendDailyDigest, sendTestEmail };
+module.exports = {
+  sendWelcomeEmail,
+  sendRegistrationOTPEmail,
+  sendOTPEmail,
+  sendDailyDigest,
+  sendTestEmail,
+  unblockEmailIfBlocked,
+};

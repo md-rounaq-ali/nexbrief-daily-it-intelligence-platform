@@ -8,6 +8,7 @@ const {
   sendWelcomeEmail,
   sendRegistrationOTPEmail,
   sendOTPEmail,
+  unblockEmailIfBlocked,
 } = require('../services/emailService');
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -378,7 +379,10 @@ router.put('/unsubscribe', protect, async (req, res) => {
 
 router.put('/resubscribe', protect, async (req, res) => {
   try {
-    await User.findByIdAndUpdate(req.user._id, { isSubscribed: true, unsubscribedAt: null });
+    const user = await User.findByIdAndUpdate(req.user._id, { isSubscribed: true, unsubscribedAt: null });
+    if (user?.email) {
+      await unblockEmailIfBlocked(user.email);
+    }
     res.json({ success: true, message: 'Welcome back! You are now subscribed to NexBrief Daily.' });
   } catch { res.status(500).json({ success: false, message: 'Could not re-subscribe.' }); }
 });
