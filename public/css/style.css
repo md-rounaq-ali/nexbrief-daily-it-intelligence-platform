@@ -806,7 +806,7 @@ img { max-width: 100%; display: block; }
   line-height: 1.7;
 }
 .faq-item.active .faq-answer {
-  max-height: 300px;
+  max-height: 500px;
   padding: 0 22px 18px;
 }
 
