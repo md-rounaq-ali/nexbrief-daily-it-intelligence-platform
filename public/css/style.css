@@ -114,6 +114,24 @@ img { max-width: 100%; display: block; }
   text-decoration: none;
 }
 .logo-nex { color: var(--color-primary-light); }
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  list-style: none;
+}
+.nav-links a {
+  color: var(--color-text-muted);
+  font-size: 14px;
+  font-weight: 500;
+  transition: color var(--transition-fast);
+}
+.nav-links a:hover {
+  color: var(--color-primary-light);
+}
+@media (max-width: 900px) {
+  .nav-links { display: none; }
+}
 .nav-actions { display: flex; align-items: center; gap: 12px; }
 
 /* ---- Buttons ---- */
@@ -808,6 +826,51 @@ img { max-width: 100%; display: block; }
 .faq-item.active .faq-answer {
   max-height: 500px;
   padding: 0 22px 18px;
+}
+
+/* ---- About Creator Section ---- */
+.about-section {
+  padding: 60px 0 40px;
+}
+.about-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: 40px 32px;
+  text-align: center;
+  max-width: 860px;
+  margin: 0 auto;
+}
+.about-content p {
+  color: var(--color-text-muted);
+  font-size: 15px;
+  line-height: 1.8;
+  margin: 20px auto 24px;
+  max-width: 720px;
+}
+.about-tags {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+}
+.about-tag {
+  background: rgba(99, 102, 241, 0.12);
+  color: var(--color-primary-light);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 20px;
+}
+.about-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
 }
 
 /* ---- Responsive ---- */

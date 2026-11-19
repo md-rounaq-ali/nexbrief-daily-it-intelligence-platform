@@ -112,6 +112,47 @@
           }
         }
       ]
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "itemListElement": [
+        {
+          "@type": "SiteNavigationElement",
+          "position": 1,
+          "name": "Trending Daily News",
+          "description": "Daily IT & Tech news covering Artificial Intelligence, developer frameworks, and cloud infrastructure.",
+          "url": "https://nexbrief-news.onrender.com/#topics"
+        },
+        {
+          "@type": "SiteNavigationElement",
+          "position": 2,
+          "name": "IT Jobs & Internships",
+          "description": "Mass recruitment updates, tech hiring alerts, and software internship openings in India.",
+          "url": "https://nexbrief-news.onrender.com/#topics"
+        },
+        {
+          "@type": "SiteNavigationElement",
+          "position": 3,
+          "name": "Why NexBrief",
+          "description": "Curated 50% IT, 30% Education, and 20% World news delivered every morning at 7 AM IST.",
+          "url": "https://nexbrief-news.onrender.com/#features"
+        },
+        {
+          "@type": "SiteNavigationElement",
+          "position": 4,
+          "name": "Frequently Asked Questions",
+          "description": "Answers to how NexBrief works, delivery schedule at 7 AM IST, and daily life benefits.",
+          "url": "https://nexbrief-news.onrender.com/#faq"
+        },
+        {
+          "@type": "SiteNavigationElement",
+          "position": 5,
+          "name": "About Creator Md Rounaq Ali",
+          "description": "Software developer & B.Tech student at NNRESGI Hyderabad who designed and built NexBrief.",
+          "url": "https://nexbrief-news.onrender.com/#about"
+        }
+      ]
     }
   ]
   </script>
@@ -133,6 +174,13 @@
   <nav class="navbar" id="navbar">
     <div class="nav-container">
       <a href="/" class="nav-logo" style="display:flex;align-items:center;gap:10px;"><img src="/images/logo.svg" alt="NexBrief Logo" style="height:32px;width:32px;border-radius:6px;object-fit:cover;" /><span><span class="logo-nex">Nex</span>Brief</span></a>
+      <ul class="nav-links">
+        <li><a href="#topics">Daily News</a></li>
+        <li><a href="#features">Why NexBrief</a></li>
+        <li><a href="#share">Share</a></li>
+        <li><a href="#faq">FAQ</a></li>
+        <li><a href="#about">About Creator</a></li>
+      </ul>
       <div class="nav-actions">
         <button class="btn btn-ghost" id="nav-login-btn">Sign In</button>
         <button class="btn btn-primary" id="nav-register-btn">Get Started Free</button>
@@ -384,9 +432,34 @@
     </div>
   </section>
 
-  <!-- ═══════════════════════════════════════════════════════
-       AUTH MODAL — Register / Login / Forgot Password
-  ═══════════════════════════════════════════════════════ -->
+  <!-- About Developer & Platform Creator -->
+  <section class="about-section" id="about">
+    <div class="container">
+      <div class="about-card">
+        <div class="section-badge">Platform Creator & Software Engineer</div>
+        <h2 class="section-title">Engineered by Md Rounaq Ali</h2>
+        <p class="section-subtitle">B.Tech Computer Science & Engineering Student at NNRESGI Hyderabad · Aspiring Software Engineer</p>
+        <div class="about-content">
+          <p>
+            NexBrief Daily News was designed, architected, and built from scratch by <strong>Md Rounaq Ali</strong> to solve information fragmentation for engineering students and technology professionals across India. Driven by a passion for scalable software architecture, mobile development, and automated intelligence engines, Rounaq engineered NexBrief to deliver high-impact daily news, placement notifications, and AI frameworks directly to inboxes every morning at 7:00 AM IST.
+          </p>
+          <div class="about-tags">
+            <span class="about-tag">B.Tech CSE (NNRESGI)</span>
+            <span class="about-tag">Full-Stack Web Development</span>
+            <span class="about-tag">Flutter & Dart Mobile Apps</span>
+            <span class="about-tag">Node.js & Express.js</span>
+            <span class="about-tag">Python & Data Science</span>
+            <span class="about-tag">VoxCalc & NexBrief Creator</span>
+          </div>
+          <div class="about-links">
+            <a href="https://md-rounaq-ali.netlify.app/" target="_blank" rel="noopener noreferrer" class="btn btn-ghost">🌐 Portfolio Website</a>
+            <a href="https://github.com/md-rounaq-ali" target="_blank" rel="noopener noreferrer" class="btn btn-ghost">🐙 GitHub (@md-rounaq-ali)</a>
+            <a href="https://www.linkedin.com/in/md-rounaq-ali/" target="_blank" rel="noopener noreferrer" class="btn btn-ghost">💼 LinkedIn Profile</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
   <div class="modal-overlay" id="modal-overlay">
     <div class="modal" id="auth-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
       <button class="modal-close" id="modal-close-btn" aria-label="Close">&times;</button>
@@ -632,7 +705,10 @@
           <p>50% IT · 30% Education · 20% World. Daily at 7 AM IST. Built for B.Tech students & IT professionals.</p>
         </div>
         <div class="footer-links">
+          <a href="#topics">Daily News</a>
           <a href="#features">Features</a>
+          <a href="#faq">FAQ</a>
+          <a href="#about">About Md Rounaq Ali</a>
           <button class="link-btn footer-link-btn" id="footer-register-btn">Subscribe Free</button>
           <button class="link-btn footer-link-btn" id="footer-login-btn">Sign In</button>
         </div>
