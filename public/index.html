@@ -28,133 +28,159 @@
   <meta name="twitter:description" content="India's first daily tech news intelligence platform by Md Rounaq Ali. Curated AI, cloud, IT jobs, and engineering news daily at 7 AM IST." />
   <meta name="twitter:image" content="https://nexbrief-news.onrender.com/images/devto_cover.png" />
 
-  <!-- Rich Structured Data Schema (JSON-LD) for Google Search SEO -->
+  <!-- Google Sitelinks Searchbox & WebSite Schema -->
   <script type="application/ld+json">
-  [
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "NexBrief Daily News",
-      "alternateName": [
-        "NexBrief",
-        "NexBrief News",
-        "Daily Tech News",
-        "Daily IT News",
-        "Md Rounaq Ali NexBrief",
-        "Md Rounaq Ali Daily News",
-        "Daily News Digest"
-      ],
-      "description": "NexBrief Daily News is India's dedicated daily news and tech intelligence platform — 50% IT & AI, 30% Education & Research, 20% World News. Delivered at 7 AM IST, every single morning.",
-      "url": "https://nexbrief-news.onrender.com",
-      "logo": "https://nexbrief-news.onrender.com/images/favicon.png",
-      "creator": {
-        "@type": "Person",
-        "name": "Md Rounaq Ali",
-        "jobTitle": "Software Developer & Platform Creator",
-        "url": "https://md-rounaq-ali.netlify.app/",
-        "sameAs": [
-          "https://github.com/md-rounaq-ali",
-          "https://www.linkedin.com/in/md-rounaq-ali/"
-        ]
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "NexBrief Daily News",
+    "alternateName": ["NexBrief", "NexBrief News", "Daily Tech News", "Md Rounaq Ali NexBrief"],
+    "url": "https://nexbrief-news.onrender.com",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": "https://nexbrief-news.onrender.com/?q={search_term_string}"
       },
-      "publisher": {
-        "@type": "Organization",
-        "name": "NexBrief Daily News",
-        "founder": {
-          "@type": "Person",
-          "name": "Md Rounaq Ali"
-        },
-        "logo": "https://nexbrief-news.onrender.com/images/favicon.png"
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+
+  <!-- Software Application Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "NexBrief Daily News",
+    "operatingSystem": "All",
+    "applicationCategory": "NewsApplication",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "INR"
+    },
+    "description": "India's premier daily IT & Tech intelligence platform for engineers and B.Tech students.",
+    "author": {
+      "@type": "Person",
+      "name": "Md Rounaq Ali",
+      "url": "https://md-rounaq-ali.netlify.app/"
+    }
+  }
+  </script>
+
+  <!-- FAQ Rich Snippets Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is NexBrief Daily News?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "NexBrief Daily News is India's first dedicated daily news and tech intelligence platform created by Md Rounaq Ali. It aggregates, categorizes, and delivers curated updates covering IT, AI, software engineering, jobs, and world news directly to subscribers' inboxes every morning at 7:00 AM IST."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How is NexBrief Daily News useful in daily life?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "NexBrief saves 30 to 45 minutes of daily scrolling across scattered blogs, news feeds, and job boards. Delivered at 7:00 AM IST with your morning tea, it provides engineering students and developers with actionable updates on mass recruitment drives, tech internships, new AI tools, developer frameworks, and industry shifts to excel in campus placements and technical interviews."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How does NexBrief Daily News select and curate fresh news every day?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "NexBrief uses an automated news engine that enforces a balanced 60% India and 40% Global ratio, filtering out duplicate or stale articles across days and prioritizing hiring updates, IT jobs, AI tools, developer frameworks, and education breakthroughs."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is NexBrief Daily News free?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, NexBrief Daily News is 100% free forever for all engineering students, software developers, and tech enthusiasts. There are no paywalls or subscription fees."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Who developed NexBrief Daily News?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "NexBrief Daily News was designed and developed by Md Rounaq Ali, a software engineer and B.Tech CSE student at NNRESGI Hyderabad, to solve news overload for engineering students."
+        }
       }
-    },
-    {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "What is NexBrief Daily News?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "NexBrief Daily News is India's first dedicated daily news and tech intelligence platform created by Md Rounaq Ali. It aggregates, categorizes, and delivers curated updates covering IT, AI, software engineering, jobs, and world news directly to subscribers' inboxes every morning at 7:00 AM IST."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "How is NexBrief Daily News useful in daily life?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "NexBrief saves 30 to 45 minutes of daily scrolling across scattered blogs, news feeds, and job boards. Delivered at 7:00 AM IST with your morning tea, it provides engineering students and developers with actionable updates on mass recruitment drives, tech internships, new AI tools, developer frameworks, and industry shifts to excel in campus placements and technical interviews."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "How does NexBrief Daily News select and curate fresh news every day?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "NexBrief uses an automated news engine that enforces a balanced 60% India and 40% Global ratio, filtering out duplicate or stale articles across days and prioritizing hiring updates, IT jobs, AI tools, developer frameworks, and education breakthroughs."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Is NexBrief Daily News free?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Yes, NexBrief Daily News is 100% free forever for all engineering students, software developers, and tech enthusiasts. There are no paywalls or subscription fees."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Who developed NexBrief Daily News?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "NexBrief Daily News was designed and developed by Md Rounaq Ali, a software engineer and B.Tech CSE student at NNRESGI Hyderabad, to solve news overload for engineering students."
-          }
-        }
-      ]
-    },
-    {
-      "@context": "https://schema.org",
-      "@type": "ItemList",
-      "itemListElement": [
-        {
-          "@type": "SiteNavigationElement",
-          "position": 1,
-          "name": "Trending Daily News",
-          "description": "Daily IT & Tech news covering Artificial Intelligence, developer frameworks, and cloud infrastructure.",
-          "url": "https://nexbrief-news.onrender.com/#topics"
-        },
-        {
-          "@type": "SiteNavigationElement",
-          "position": 2,
-          "name": "IT Jobs & Internships",
-          "description": "Mass recruitment updates, tech hiring alerts, and software internship openings in India.",
-          "url": "https://nexbrief-news.onrender.com/#topics"
-        },
-        {
-          "@type": "SiteNavigationElement",
-          "position": 3,
-          "name": "Why NexBrief",
-          "description": "Curated 50% IT, 30% Education, and 20% World news delivered every morning at 7 AM IST.",
-          "url": "https://nexbrief-news.onrender.com/#features"
-        },
-        {
-          "@type": "SiteNavigationElement",
-          "position": 4,
-          "name": "Frequently Asked Questions",
-          "description": "Answers to how NexBrief works, delivery schedule at 7 AM IST, and daily life benefits.",
-          "url": "https://nexbrief-news.onrender.com/#faq"
-        },
-        {
-          "@type": "SiteNavigationElement",
-          "position": 5,
-          "name": "About Creator Md Rounaq Ali",
-          "description": "Software developer & B.Tech student at NNRESGI Hyderabad who designed and built NexBrief.",
-          "url": "https://nexbrief-news.onrender.com/#about"
-        }
+    ]
+  }
+  </script>
+
+  <!-- Profile Page / Creator Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ProfilePage",
+    "mainEntity": {
+      "@type": "Person",
+      "name": "Md Rounaq Ali",
+      "alternateName": ["Rounaq Ali"],
+      "description": "Software engineer and creator of NexBrief Daily News and VoxCalc, studying B.Tech CSE at NNRESGI Hyderabad.",
+      "url": "https://md-rounaq-ali.netlify.app/",
+      "sameAs": [
+        "https://github.com/md-rounaq-ali",
+        "https://www.linkedin.com/in/md-rounaq-ali/"
       ]
     }
-  ]
+  }
+  </script>
+
+  <!-- Site Navigation Sitelinks Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "itemListElement": [
+      {
+        "@type": "SiteNavigationElement",
+        "position": 1,
+        "name": "Trending Daily News",
+        "description": "Daily IT & Tech news covering Artificial Intelligence, developer frameworks, and cloud infrastructure.",
+        "url": "https://nexbrief-news.onrender.com/#topics"
+      },
+      {
+        "@type": "SiteNavigationElement",
+        "position": 2,
+        "name": "IT Jobs & Internships",
+        "description": "Mass recruitment updates, tech hiring alerts, and software internship openings in India.",
+        "url": "https://nexbrief-news.onrender.com/#topics"
+      },
+      {
+        "@type": "SiteNavigationElement",
+        "position": 3,
+        "name": "Why NexBrief",
+        "description": "Curated 50% IT, 30% Education, and 20% World news delivered every morning at 7 AM IST.",
+        "url": "https://nexbrief-news.onrender.com/#features"
+      },
+      {
+        "@type": "SiteNavigationElement",
+        "position": 4,
+        "name": "Frequently Asked Questions",
+        "description": "Answers to how NexBrief works, delivery schedule at 7 AM IST, and daily life benefits.",
+        "url": "https://nexbrief-news.onrender.com/#faq"
+      },
+      {
+        "@type": "SiteNavigationElement",
+        "position": 5,
+        "name": "About Creator Md Rounaq Ali",
+        "description": "Software developer & B.Tech student at NNRESGI Hyderabad who designed and built NexBrief.",
+        "url": "https://nexbrief-news.onrender.com/#about"
+      }
+    ]
+  }
   </script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
