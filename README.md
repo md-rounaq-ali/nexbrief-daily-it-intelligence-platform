@@ -47,7 +47,7 @@ Engineering students, freshers, and software developers in India waste 30–45 m
 | :--- | :--- |
 | 🇮🇳 **India-First Curation (60/40)** | Enforces a **60% India / 40% Global** balance across every section with a 3-day deduplication filter against previously sent digests. |
 | 🎯 **Student-Focused Filtering** | Blocks off-topic gaming, sports, celebrity, and entertainment clickbait while prioritizing Indian IT hiring (TCS, Infosys, Wipro, HCL, GCCs, Internships). |
-| 🤖 **AI *"Why This Matters"*** | Batched **Google Gemini (`gemini-2.5-flash`)** summarization with an automatic domain-aware fallback adding a 1-line actionable takeaway to every article. |
+| 🤖 **AI *"Why This Matters"*** | Batched **Google Gemini (`gemini-flash-latest`)** summarization with an automatic domain-aware fallback adding a 1-line actionable takeaway to every article. |
 | 🗞️ **SEO Public Archive (`/archive`)** | Server-rendered edition archive (`/archive/YYYY-MM-DD`) featuring Open Graph meta tags, `NewsArticle` JSON-LD structured data, and dynamic `/sitemap.xml`. |
 | ⏰ **Live 7 AM IST Countdown** | Timezone-safe `HH:MM:SS` countdown across the homepage, dashboard, and public archive. |
 | 🔔 **VAPID Web Push Alerts** | Morning browser notifications using `web-push` with automatic MongoDB key persistence and stale endpoint cleanup. |
@@ -81,7 +81,7 @@ Cron Trigger (7:00 AM IST) / Manual Admin Trigger
 
 - **Backend:** Node.js (`>= 18`), Express.js, `node-cron`, `web-push`
 - **Database:** MongoDB Atlas + Mongoose 8
-- **APIs & AI:** NewsAPI.org, Google Gemini API (`gemini-2.5-flash`), Brevo Transactional HTTPS API (Port 443)
+- **APIs & AI:** NewsAPI.org, Google Gemini API (`gemini-flash-latest`), Brevo Transactional HTTPS API (Port 443)
 - **Auth & Security:** JWT (`jsonwebtoken`), `bcryptjs`, 6-digit expiring email OTP verification
 - **Frontend & PWA:** Semantic HTML5, CSS3, ES6 Vanilla JavaScript, Service Worker + Web App Manifest
 

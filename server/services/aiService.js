@@ -87,8 +87,9 @@ const generateGeminiBatchInsights = async (articles) => {
   if (!apiKey || !articles || articles.length === 0) return null;
 
   const modelsToTry = [
-    process.env.GEMINI_MODEL || 'gemini-2.5-flash',
-    'gemini-2.0-flash',
+    process.env.GEMINI_MODEL || 'gemini-flash-latest',
+    'gemini-flash-lite-latest',
+    'gemini-3-flash-preview',
   ];
 
   const payloadArticles = articles.map((art, index) => ({
