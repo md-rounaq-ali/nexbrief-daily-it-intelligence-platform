@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://nexbrief-news.onrender.com/</loc>
-    <lastmod>2026-11-19</lastmod>
+    <lastmod>2026-11-25</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://nexbrief-news.onrender.com/images/devto_cover.png</image:loc>
+      <image:title>NexBrief Daily News — Daily IT &amp; Tech Intelligence Platform</image:title>
+      <image:caption>Daily IT news, AI updates, software developer news, and IT Sector intelligence by Md Rounaq Ali</image:caption>
+    </image:image>
   </url>
 </urlset>

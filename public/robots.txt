@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
+Allow: /images/
 Disallow: /dashboard
 Disallow: /admin
 Disallow: /api/

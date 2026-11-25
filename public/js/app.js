@@ -36,6 +36,12 @@ const clearServerError = (id) => {
 };
 const showFieldError = (id, msg) => { const el = $(`#${id}`); if (el) el.textContent = msg; };
 const clearFieldError = (id) => { const el = $(`#${id}`); if (el) el.textContent = ''; };
+const escapeHtml = (str) => {
+  if (!str) return '';
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+};
 
 // ── Auth Guard — redirect to dashboard if already logged in ──────────────────
 (async () => {
@@ -472,5 +478,186 @@ $$('.faq-question').forEach((btn) => {
     const wasActive = item.classList.contains('active');
     $$('.faq-item').forEach(i => i.classList.remove('active'));
     if (!wasActive) item.classList.add('active');
+  });
+});
+
+// ════════════════════════════════════════════════════════════════════════════
+// INTERACTIVE SEARCH & LIVE HEADLINES PREVIEW
+// ════════════════════════════════════════════════════════════════════════════
+let previewArticles = [];
+
+const timeAgoPreview = (dateStr) => {
+  if (!dateStr) return 'Recent';
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const h = Math.floor(diff / 3600000);
+  if (h > 23) return `${Math.floor(h / 24)}d ago`;
+  if (h > 0) return `${h}h ago`;
+  return `${Math.max(0, Math.floor(diff / 60000))}m ago`;
+};
+
+const renderPreviewCards = (articles) => {
+  const grid = $('#live-preview-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+
+  if (!articles || articles.length === 0) {
+    grid.innerHTML = `
+      <div style="grid-column: 1 / -1; text-align: center; padding: 32px 16px; color: var(--color-text-muted);">
+        <p style="font-size: 16px; margin-bottom: 8px;">No matching articles found for your query.</p>
+        <p style="font-size: 13px;">Try searching for <strong style="color: #818cf8;">IT news</strong>, <strong style="color: #6ee7b7;">AI</strong>, <strong style="color: #fbbf24;">hiring</strong>, or <strong style="color: #38bdf8;">Md Rounaq Ali</strong>.</p>
+      </div>
+    `;
+    return;
+  }
+
+  articles.forEach((art) => {
+    const card = document.createElement('div');
+    card.className = 'preview-card';
+    card.innerHTML = `
+      ${art.urlToImage ? `<img src="${art.urlToImage}" alt="${escapeHtml(art.title)}" class="preview-card-img" loading="lazy" onerror="this.style.display='none'" />` : ''}
+      <div class="preview-card-body">
+        <div class="preview-card-top">
+          <span class="preview-card-cat">${art.category || 'IT'}</span>
+          <span class="preview-card-time">${timeAgoPreview(art.publishedAt)}</span>
+        </div>
+        <h4 class="preview-card-title">${escapeHtml(art.title)}</h4>
+        <p class="preview-card-desc">${escapeHtml(art.description || 'Click below to read the full intelligence report.')}</p>
+        <div class="preview-card-footer">
+          <span class="preview-card-source">📰 ${escapeHtml(art.source || 'NexBrief Intel')}</span>
+          <a href="${art.url}" target="_blank" rel="noopener noreferrer" class="preview-card-link">Read Full ↗</a>
+        </div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+};
+
+const loadLiveHeadlinesPreview = async () => {
+  try {
+    const res = await fetch(`${API_BASE}/news/preview`);
+    if (!res.ok) return;
+    const data = await res.json();
+    if (data.success && Array.isArray(data.articles)) {
+      previewArticles = data.articles;
+      if (data.date) {
+        const dateFormatted = new Date(data.date + 'T00:00:00').toLocaleDateString('en-IN', {
+          weekday: 'short',
+          month: 'short',
+          day: 'numeric'
+        });
+        const dateEl = $('#live-preview-date');
+        if (dateEl) dateEl.textContent = `📅 ${dateFormatted}`;
+      }
+      renderPreviewCards(previewArticles);
+    }
+  } catch (err) {
+    console.warn('Could not load news preview:', err.message);
+  }
+};
+
+const executeSearch = (rawQuery) => {
+  const query = (rawQuery || '').trim().toLowerCase();
+  const clearBtn = $('#search-clear-btn');
+  const feedbackEl = $('#search-results-feedback');
+
+  if (clearBtn) clearBtn.classList.toggle('hidden', query.length === 0);
+
+  // Update trending pill active state
+  $$('.trend-pill').forEach(pill => {
+    const pQuery = (pill.dataset.query || '').toLowerCase();
+    pill.classList.toggle('active', query.length > 0 && (query.includes(pQuery) || pQuery.includes(query)));
+  });
+
+  if (!query) {
+    if (feedbackEl) feedbackEl.classList.add('hidden');
+    renderPreviewCards(previewArticles);
+    $$('.topic-card').forEach(c => c.style.display = '');
+    $$('.faq-item').forEach(i => { i.style.display = ''; i.classList.remove('active'); });
+    return;
+  }
+
+  // Filter preview articles
+  const filteredArticles = previewArticles.filter(art => {
+    const text = `${art.title || ''} ${art.description || ''} ${art.category || ''} ${art.source || ''}`.toLowerCase();
+    return text.includes(query);
+  });
+  renderPreviewCards(filteredArticles);
+
+  // Filter topic cards
+  let matchingTopics = 0;
+  $$('.topic-card').forEach(card => {
+    const text = card.textContent.toLowerCase();
+    const match = text.includes(query);
+    card.style.display = match ? '' : 'none';
+    if (match) matchingTopics++;
+  });
+
+  // Filter & auto-expand matching FAQs
+  let matchingFaqs = 0;
+  $$('.faq-item').forEach(item => {
+    const text = item.textContent.toLowerCase();
+    const match = text.includes(query);
+    item.style.display = match ? '' : 'none';
+    if (match) {
+      matchingFaqs++;
+      item.classList.add('active'); // auto open matching FAQ
+    } else {
+      item.classList.remove('active');
+    }
+  });
+
+  // Show feedback banner
+  if (feedbackEl) {
+    const totalFound = filteredArticles.length + matchingTopics + matchingFaqs;
+    feedbackEl.innerHTML = `
+      <span>🔍 Found <strong>${totalFound}</strong> results matching "<strong>${escapeHtml(rawQuery)}</strong>" (${filteredArticles.length} articles, ${matchingTopics} sectors, ${matchingFaqs} FAQs)</span>
+      <button type="button" class="link-btn" id="clear-search-link" style="color:#818cf8;font-weight:600;margin-left:12px;">✕ Reset</button>
+    `;
+    feedbackEl.classList.remove('hidden');
+    $('#clear-search-link')?.addEventListener('click', () => {
+      const input = $('#live-search-input');
+      if (input) { input.value = ''; input.focus(); }
+      executeSearch('');
+    });
+  }
+};
+
+// Setup Search Listeners
+const searchInput = $('#live-search-input');
+if (searchInput) {
+  searchInput.addEventListener('input', (e) => executeSearch(e.target.value));
+  $('#search-clear-btn')?.addEventListener('click', () => {
+    searchInput.value = '';
+    searchInput.focus();
+    executeSearch('');
+  });
+}
+
+// Trending Pills click
+$$('.trend-pill').forEach(pill => {
+  pill.addEventListener('click', () => {
+    const q = pill.dataset.query || '';
+    if (searchInput) {
+      searchInput.value = q;
+      searchInput.focus();
+    }
+    executeSearch(q);
+  });
+});
+
+$('#preview-subscribe-btn')?.addEventListener('click', () => openModal('register'));
+
+// Handle URL query parameter ?q=... (Google Sitelinks Searchbox integration)
+document.addEventListener('DOMContentLoaded', () => {
+  loadLiveHeadlinesPreview().then(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const query = urlParams.get('q') || urlParams.get('search');
+    if (query && searchInput) {
+      searchInput.value = query;
+      executeSearch(query);
+      setTimeout(() => {
+        $('#search-section')?.scrollIntoView({ behavior: 'smooth' });
+      }, 300);
+    }
   });
 });

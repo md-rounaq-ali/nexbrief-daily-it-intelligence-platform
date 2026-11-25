@@ -49,6 +49,28 @@ app.get('/favicon.svg', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/images/favicon.svg'));
 });
 
+// Dynamic sitemap with real-time current date for Google PageRank freshness signals
+app.get('/sitemap.xml', (req, res) => {
+  const today = new Date().toISOString().split('T')[0];
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://nexbrief-news.onrender.com/</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://nexbrief-news.onrender.com/images/devto_cover.png</image:loc>
+      <image:title>NexBrief Daily News — Daily IT &amp; Tech Intelligence Platform</image:title>
+      <image:caption>Daily IT news, AI updates, software developer news, and IT Sector intelligence by Md Rounaq Ali</image:caption>
+    </image:image>
+  </url>
+</urlset>`;
+  res.header('Content-Type', 'application/xml; charset=utf-8');
+  res.send(xml);
+});
+
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });

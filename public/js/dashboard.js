@@ -184,23 +184,80 @@ const loadTodaysNews = async () => {
   }
 };
 
-// ── Render Digest ─────────────────────────────────────────────────────────────
-const renderDigest = (digest) => {
+let currentDigest = null;
+
+// ── Render Articles Into Grids ────────────────────────────────────────────────
+const renderDigestArticles = (itList = [], eduList = [], worldList = []) => {
   const itGrid = $('#it-news-grid');
   const eduGrid = $('#edu-news-grid');
   const worldGrid = $('#world-news-grid');
 
-  itGrid.innerHTML = '';
-  eduGrid.innerHTML = '';
-  worldGrid.innerHTML = '';
+  if (itGrid) itGrid.innerHTML = '';
+  if (eduGrid) eduGrid.innerHTML = '';
+  if (worldGrid) worldGrid.innerHTML = '';
+
+  itList.forEach((a, i) => itGrid?.appendChild(renderNewsCard(a, i)));
+  eduList.forEach((a, i) => eduGrid?.appendChild(renderNewsCard(a, i)));
+  worldList.forEach((a, i) => worldGrid?.appendChild(renderNewsCard(a, i)));
+
+  if (!itList.length && itGrid) itGrid.innerHTML = `<p style="color:var(--color-text-muted);font-size:14px;padding:20px 0;grid-column:1/-1;">No matching IT news found.</p>`;
+  if (!eduList.length && eduGrid) eduGrid.innerHTML = `<p style="color:var(--color-text-muted);font-size:14px;padding:20px 0;grid-column:1/-1;">No matching education news found.</p>`;
+  if (!worldList.length && worldGrid) worldGrid.innerHTML = `<p style="color:var(--color-text-muted);font-size:14px;padding:20px 0;grid-column:1/-1;">No matching world headlines found.</p>`;
+};
+
+// ── Filter Dashboard Articles by Search Query ────────────────────────────────
+const filterDashboardArticles = (rawQuery) => {
+  const query = (rawQuery || '').trim().toLowerCase();
+  const clearBtn = $('#dash-search-clear');
+  const countEl = $('#dash-search-count');
+
+  if (clearBtn) clearBtn.classList.toggle('hidden', query.length === 0);
+  if (!currentDigest) return;
+
+  if (!query) {
+    if (countEl) countEl.classList.add('hidden');
+    renderDigestArticles(currentDigest.itNews, currentDigest.educationNews, currentDigest.generalNews);
+    return;
+  }
+
+  const matchFn = (a) => {
+    const text = `${a.title || ''} ${a.description || ''} ${a.category || ''} ${a.source || ''}`.toLowerCase();
+    return text.includes(query);
+  };
+
+  const filteredIt = (currentDigest.itNews || []).filter(matchFn);
+  const filteredEdu = (currentDigest.educationNews || []).filter(matchFn);
+  const filteredWorld = (currentDigest.generalNews || []).filter(matchFn);
+
+  renderDigestArticles(filteredIt, filteredEdu, filteredWorld);
+
+  const totalMatches = filteredIt.length + filteredEdu.length + filteredWorld.length;
+  if (countEl) {
+    countEl.textContent = `Found ${totalMatches} articles matching "${rawQuery}" (${filteredIt.length} IT, ${filteredEdu.length} Edu, ${filteredWorld.length} World)`;
+    countEl.classList.remove('hidden');
+  }
+};
+
+// Setup Dashboard Search Listeners
+const dashSearchInput = $('#dashboard-search-input');
+if (dashSearchInput) {
+  dashSearchInput.addEventListener('input', (e) => filterDashboardArticles(e.target.value));
+  $('#dash-search-clear')?.addEventListener('click', () => {
+    dashSearchInput.value = '';
+    dashSearchInput.focus();
+    filterDashboardArticles('');
+  });
+}
+
+// ── Render Digest ─────────────────────────────────────────────────────────────
+const renderDigest = (digest) => {
+  currentDigest = digest;
 
   const itList = digest.itNews || [];
   const eduList = digest.educationNews || [];
   const worldList = digest.generalNews || [];
 
-  itList.forEach((a, i) => itGrid.appendChild(renderNewsCard(a, i)));
-  eduList.forEach((a, i) => eduGrid.appendChild(renderNewsCard(a, i)));
-  worldList.forEach((a, i) => worldGrid.appendChild(renderNewsCard(a, i)));
+  renderDigestArticles(itList, eduList, worldList);
 
   // Summary counts
   $('#it-count').textContent = itList.length;
@@ -217,11 +274,6 @@ const renderDigest = (digest) => {
     const el = $('#delivery-badge');
     if (el) { el.style.background = 'rgba(99,102,241,0.1)'; el.style.borderColor = 'rgba(99,102,241,0.2)'; el.style.color = 'var(--color-primary-light)'; }
   }
-
-  // Empty states
-  if (!itList.length) itGrid.innerHTML = `<p style="color:var(--color-text-muted);font-size:14px;padding:20px 0;grid-column:1/-1;">No IT news available right now. Try refreshing.</p>`;
-  if (!eduList.length) eduGrid.innerHTML = `<p style="color:var(--color-text-muted);font-size:14px;padding:20px 0;grid-column:1/-1;">No education news available today.</p>`;
-  if (!worldList.length) worldGrid.innerHTML = `<p style="color:var(--color-text-muted);font-size:14px;padding:20px 0;grid-column:1/-1;">No world headlines available today.</p>`;
 
   $('#loading-state').classList.add('hidden');
   $('#content-wrapper').classList.remove('hidden');

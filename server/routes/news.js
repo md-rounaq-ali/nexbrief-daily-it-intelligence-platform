@@ -4,6 +4,32 @@ const { protect } = require('../middleware/auth');
 const Digest = require('../models/Digest');
 const { fetchAllNewsForDigest } = require('../services/newsService');
 
+// @route   GET /api/news/preview
+// @desc    Get top headline preview for landing page & search (public, no auth required)
+// @access  Public
+router.get('/preview', async (req, res) => {
+  try {
+    const today = new Date().toISOString().split('T')[0];
+    let digest = await Digest.findOne({ date: today });
+    if (!digest) {
+      digest = await Digest.findOne().sort({ date: -1 });
+    }
+    if (!digest) {
+      return res.json({ success: true, articles: [], date: today });
+    }
+    const itSlice = (digest.itNews || []).slice(0, 6);
+    const eduSlice = (digest.educationNews || []).slice(0, 3);
+    res.json({
+      success: true,
+      date: digest.date,
+      articles: [...itSlice, ...eduSlice]
+    });
+  } catch (error) {
+    console.error('News preview error:', error);
+    res.status(500).json({ success: false, message: 'Could not fetch news preview' });
+  }
+});
+
 // @route   GET /api/news/today
 // @desc    Get today's digest (50% IT + 30% Education + 20% General)
 // @access  Private

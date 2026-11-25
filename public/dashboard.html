@@ -101,6 +101,16 @@
     <!-- Content Wrapper -->
     <div class="content-wrapper hidden" id="content-wrapper">
 
+      <!-- Dashboard Search Filter -->
+      <div class="dashboard-search-container">
+        <div class="dashboard-search-box">
+          <span class="dash-search-icon">🔍</span>
+          <input type="search" id="dashboard-search-input" class="dashboard-search-input" placeholder="Search today's digest by keyword (e.g. AI, hiring, Python, cloud)..." autocomplete="off" />
+          <button class="dash-search-clear hidden" id="dash-search-clear" aria-label="Clear">✕</button>
+        </div>
+        <div id="dash-search-count" class="dash-search-count hidden"></div>
+      </div>
+
       <!-- Summary Bar -->
       <div class="summary-bar" id="summary-bar">
         <div class="summary-item">
