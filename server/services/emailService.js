@@ -439,11 +439,265 @@ const sendTestEmail = async (toEmail, digest) => {
   console.log(`✅ Test digest email sent via API → ${toEmail}`);
 };
 
+// ─── Product Update Announcement Email (NexBrief 2.0 Executive Release Note) ─
+const buildProductUpdateEmailHtml = (user, { isTest = false } = {}) => {
+  const firstName = escapeHtmlEmail((user?.name || 'Engineer').split(' ')[0]);
+  const appBase = (
+    process.env.PUBLIC_APP_URL ||
+    (process.env.APP_URL && !process.env.APP_URL.includes('localhost') ? process.env.APP_URL : null) ||
+    'https://nexbrief-news.onrender.com'
+  ).replace(/\/$/, '');
+
+  const features = [
+    {
+      num: '01',
+      tag: 'INDIA-FIRST CURATION',
+      tagColor: '#34d399',
+      tagBg: 'rgba(16,185,129,0.12)',
+      title: '60% India · 40% Global Signal Ratio',
+      desc: 'Prioritizes Indian IT hiring, internships, off-campus drives (TCS, Infosys, Wipro, HCL, GCCs), GATE/AICTE &amp; IIT/NIT updates — filtering out off-topic gaming and clickbait.',
+    },
+    {
+      num: '02',
+      tag: 'GEMINI AI INSIGHTS',
+      tagColor: '#a5b4fc',
+      tagBg: 'rgba(99,102,241,0.14)',
+      title: '1-Line "Why This Matters" on Every Story',
+      desc: 'Every article now pairs the headline with a concise AI takeaway highlighting interview value, skill impact, or application urgency.',
+    },
+    {
+      num: '03',
+      tag: 'PUBLIC WEB ARCHIVE',
+      tagColor: '#38bdf8',
+      tagBg: 'rgba(56,189,248,0.12)',
+      title: 'Searchable Archive at /archive',
+      desc: 'Revisit any past morning edition directly on the web with full section breakdowns, category filtering, and clean mobile reading.',
+    },
+    {
+      num: '04',
+      tag: 'PWA &amp; PUSH ALERTS',
+      tagColor: '#c4b5fd',
+      tagBg: 'rgba(139,92,246,0.14)',
+      title: 'Installable Web App &amp; 7:00 AM IST Push Alerts',
+      desc: 'Install NexBrief onto your home screen like a native app, enable optional 7:00 AM IST browser alerts, and share key alerts to WhatsApp or LinkedIn in one tap.',
+    },
+  ];
+
+  const featureRowsHtml = features
+    .map(
+      (f, idx) => `
+      <tr>
+        <td style="padding:16px 0;${idx < features.length - 1 ? 'border-bottom:1px solid #1e293b;' : ''}">
+          <table width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+              <td width="38" valign="top" style="padding-top:2px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;font-weight:700;color:#64748b;">
+                ${f.num}
+              </td>
+              <td valign="top">
+                <div style="margin-bottom:5px;">
+                  <span style="display:inline-block;background:${f.tagBg};color:${f.tagColor};font-size:10px;font-weight:700;letter-spacing:0.8px;padding:2px 8px;border-radius:4px;text-transform:uppercase;">${f.tag}</span>
+                </div>
+                <div style="color:#f8fafc;font-size:15px;font-weight:700;margin-bottom:4px;line-height:1.35;">${f.title}</div>
+                <div style="color:#94a3b8;font-size:13px;line-height:1.6;">${f.desc}</div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>`
+    )
+    .join('');
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>NexBrief Release 2.0 — Platform Update</title>
+</head>
+<body style="margin:0;padding:0;background:#090d16;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;">
+  <!-- Hidden Inbox Preheader Text -->
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;mso-hide:all;">
+    NexBrief 2.0 is live: India-first hiring intelligence, AI "Why This Matters" summaries, searchable /archive &amp; 7 AM browser alerts.
+  </div>
+
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#090d16;">
+    <tr>
+      <td align="center" style="padding:36px 14px;">
+        <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#0f172a;border:1px solid #1e293b;border-radius:16px;overflow:hidden;">
+
+          <!-- Subtle Top Brand Bar -->
+          <tr>
+            <td style="background:#0c1322;border-bottom:1px solid #1e293b;padding:18px 32px;">
+              <table width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td align="left" style="font-size:20px;font-weight:900;color:#ffffff;letter-spacing:-0.5px;">
+                    <span style="color:#818cf8;">Nex</span>Brief
+                  </td>
+                  <td align="right" style="font-size:11px;font-weight:700;letter-spacing:1.1px;color:#94a3b8;text-transform:uppercase;">
+                    ${isTest ? 'Preview · ' : ''}Release 2.0 · Nov 2026
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Editorial Hero Banner -->
+          <tr>
+            <td style="background:linear-gradient(135deg,#171c3a 0%,#1e1b4b 60%,#2e1065 100%);padding:36px 32px;border-bottom:1px solid #27324a;">
+              <div style="font-size:11px;font-weight:700;letter-spacing:1.4px;color:#a5b4fc;text-transform:uppercase;margin-bottom:10px;">
+                Platform Release Briefing
+              </div>
+              <h1 style="margin:0 0 12px 0;color:#ffffff;font-size:24px;font-weight:800;line-height:1.3;letter-spacing:-0.4px;">
+                Sharper Signal. Zero Clutter. Built for India's Engineers.
+              </h1>
+              <p style="margin:0;color:#cbd5e1;font-size:14px;line-height:1.65;">
+                Hello ${firstName}, we have upgraded every layer of NexBrief so your 7:00 AM IST briefing gives you faster, more actionable career and tech intelligence.
+              </p>
+            </td>
+          </tr>
+
+          <!-- At-a-Glance Metrics Strip -->
+          <tr>
+            <td style="padding:20px 32px 4px;">
+              <table width="100%" cellpadding="0" cellspacing="0" style="background:#131d31;border:1px solid #24324a;border-radius:10px;">
+                <tr>
+                  <td width="33%" align="center" style="padding:14px 8px;border-right:1px solid #24324a;">
+                    <div style="font-size:16px;font-weight:800;color:#34d399;">60% India</div>
+                    <div style="font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:0.6px;margin-top:2px;">Local Tech Priority</div>
+                  </td>
+                  <td width="34%" align="center" style="padding:14px 8px;border-right:1px solid #24324a;">
+                    <div style="font-size:16px;font-weight:800;color:#a5b4fc;">Gemini AI</div>
+                    <div style="font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:0.6px;margin-top:2px;">Actionable Insights</div>
+                  </td>
+                  <td width="33%" align="center" style="padding:14px 8px;">
+                    <div style="font-size:16px;font-weight:800;color:#38bdf8;">7:00 AM IST</div>
+                    <div style="font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:0.6px;margin-top:2px;">Email &amp; Push Drop</div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Numbered Release Highlights -->
+          <tr>
+            <td style="padding:12px 32px 8px;">
+              <table width="100%" cellpadding="0" cellspacing="0">
+                ${featureRowsHtml}
+              </table>
+            </td>
+          </tr>
+
+          <!-- Live Story Preview Sample -->
+          <tr>
+            <td style="padding:12px 32px 24px;">
+              <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#64748b;text-transform:uppercase;margin-bottom:8px;">
+                Sample Morning Briefing Format
+              </div>
+              <table width="100%" cellpadding="0" cellspacing="0" style="background:#151f32;border:1px solid #2a3954;border-radius:10px;">
+                <tr>
+                  <td style="padding:16px 18px;">
+                    <div style="margin-bottom:8px;">
+                      <span style="display:inline-block;background:#059669;color:#ffffff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;letter-spacing:0.5px;">JOBS</span>
+                      <span style="display:inline-block;background:rgba(16,185,129,0.14);color:#6ee7b7;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;margin-left:5px;">INDIA</span>
+                    </div>
+                    <div style="color:#f1f5f9;font-size:14px;font-weight:700;line-height:1.4;margin-bottom:10px;">
+                      Enterprise IT Hiring &amp; AI Engineering Demand Accelerates Across Indian GCC Hubs
+                    </div>
+                    <div style="background:rgba(99,102,241,0.1);border-left:3px solid #818cf8;padding:8px 12px;border-radius:4px;">
+                      <span style="font-size:10px;font-weight:800;letter-spacing:0.5px;color:#a5b4fc;text-transform:uppercase;">Why This Matters</span>
+                      <div style="font-size:12px;color:#e2e8f0;line-height:1.5;margin-top:2px;">
+                        GCCs are actively recruiting freshers with cloud, API &amp; DSA fundamentals — prioritize off-campus drives in Bengaluru, Hyderabad &amp; Pune.
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Action Buttons -->
+          <tr>
+            <td style="padding:4px 32px 28px;text-align:center;">
+              <a href="${appBase}/dashboard" target="_blank" style="display:inline-block;background:linear-gradient(135deg,#6366f1,#4f46e5);color:#ffffff;font-size:14px;font-weight:700;padding:13px 28px;border-radius:8px;text-decoration:none;margin:5px;letter-spacing:0.2px;">
+                Open Your Dashboard &rarr;
+              </a>
+              <a href="${appBase}/archive" target="_blank" style="display:inline-block;background:#162033;border:1px solid #334155;color:#e2e8f0;font-size:14px;font-weight:600;padding:12px 22px;border-radius:8px;text-decoration:none;margin:5px;">
+                Browse Archive
+              </a>
+            </td>
+          </tr>
+
+          <!-- Creator Sign-off -->
+          <tr>
+            <td style="padding:0 32px 24px;">
+              <p style="margin:0;color:#94a3b8;font-size:13px;line-height:1.6;">
+                Thank you for reading every morning.<br />
+                <strong style="color:#e2e8f0;">Md Rounaq Ali</strong> &mdash; <span style="color:#64748b;">Creator, NexBrief</span>
+              </p>
+            </td>
+          </tr>
+
+          <!-- Clean Footer -->
+          <tr>
+            <td style="background:#0a0f1c;border-top:1px solid #1e293b;padding:22px 32px;text-align:center;">
+              <p style="color:#64748b;font-size:12px;margin:0 0 10px 0;line-height:1.6;">
+                You are receiving this announcement as a registered member of <strong style="color:#818cf8;">NexBrief Daily</strong>. Manage delivery preferences anytime in your <a href="${appBase}/dashboard" style="color:#94a3b8;text-decoration:underline;">dashboard</a>.
+              </p>
+              <p style="color:#94a3b8;font-size:12px;margin:0 0 10px 0;line-height:1.6;">
+                &copy; ${new Date().getFullYear()} NexBrief. All rights reserved. Developed by <a href="https://md-rounaq-ali.netlify.app/" target="_blank" style="color:#818cf8;text-decoration:underline;font-weight:600;">Md Rounaq Ali</a> for India's engineers.
+              </p>
+              <p style="color:#64748b;font-size:12px;margin:0;line-height:1.6;">
+                Search Creator on Google: &nbsp;<a href="https://www.google.com/search?q=md+rounaq+ali" target="_blank" style="display:inline-block;padding:4px 14px;background:#0f2942;border:1px solid #0284c7;border-radius:20px;color:#38bdf8;font-size:12px;font-weight:600;text-decoration:none;">md rounaq ali &#8599;</a>
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+};
+
+const sendProductUpdateEmail = async (user, { isTest = false } = {}) => {
+  await unblockEmailIfBlocked(user.email);
+  const subjectPrefix = isTest ? '[TEST] ' : '';
+  const data = await sendEmailViaAPI({
+    toEmail: user.email,
+    toName: user.name || 'Engineer',
+    subject: `${subjectPrefix}Introducing NexBrief 2.0 — India-First Hiring, AI Insights & Public Archive`,
+    htmlContent: buildProductUpdateEmailHtml(user, { isTest }),
+  });
+  console.log(`✅ Product update email sent via API → ${user.email} (test=${isTest})`);
+  return data;
+};
+
+const sendProductUpdateBlast = async (users) => {
+  let successCount = 0;
+  let failCount = 0;
+  for (const user of users) {
+    try {
+      await sendProductUpdateEmail(user, { isTest: false });
+      successCount++;
+    } catch (err) {
+      console.error(`❌ Product update failed → ${user.email}:`, err.message);
+      failCount++;
+    }
+    await new Promise((r) => setTimeout(r, 120));
+  }
+  console.log(`📢 Product Update Blast Report: ${successCount} sent, ${failCount} failed`);
+  return { successCount, failCount };
+};
+
 module.exports = {
   sendWelcomeEmail,
   sendRegistrationOTPEmail,
   sendOTPEmail,
   sendDailyDigest,
   sendTestEmail,
+  buildProductUpdateEmailHtml,
+  sendProductUpdateEmail,
+  sendProductUpdateBlast,
   unblockEmailIfBlocked,
 };
