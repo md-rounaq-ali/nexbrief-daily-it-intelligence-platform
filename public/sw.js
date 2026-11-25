@@ -1,15 +1,10 @@
-// NexBrief Service Worker — PWA Offline Cache + 7 AM IST Web Push Notifications
+// NexBrief Service Worker — PWA Offline Shell Cache + 7 AM IST Web Push Notifications
 'use strict';
 
-const CACHE_NAME = 'nexbrief-shell-v2';
+const CACHE_NAME = 'nexbrief-shell-v4';
 const PRECACHE_URLS = [
   '/',
   '/manifest.json',
-  '/css/style.css',
-  '/css/dashboard.css',
-  '/css/admin.css',
-  '/js/pwa.js',
-  '/js/app.js',
   '/images/logo.svg',
   '/images/favicon.png',
   '/images/icon-192.png',
@@ -41,11 +36,16 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
-  // Never cache API, tracking, or dynamic archive SEO pages offline-first
+  // Never cache API or tracking endpoints
   if (url.pathname.startsWith('/api/')) return;
 
-  // Navigation requests: network-first, fallback to cache
-  if (request.mode === 'navigate') {
+  // Navigation requests, CSS, and JS: ALWAYS network-first so UI updates appear immediately
+  const isCodeOrDoc =
+    request.mode === 'navigate' ||
+    url.pathname.endsWith('.css') ||
+    url.pathname.endsWith('.js');
+
+  if (isCodeOrDoc) {
     event.respondWith(
       fetch(request)
         .then((res) => {
@@ -55,12 +55,12 @@ self.addEventListener('fetch', (event) => {
           }
           return res;
         })
-        .catch(() => caches.match(request).then((m) => m || caches.match('/')))
+        .catch(() => caches.match(request).then((m) => m || (request.mode === 'navigate' ? caches.match('/') : undefined)))
     );
     return;
   }
 
-  // Static assets: stale-while-revalidate
+  // Images & static icons: stale-while-revalidate
   event.respondWith(
     caches.match(request).then((cached) => {
       const networkFetch = fetch(request)

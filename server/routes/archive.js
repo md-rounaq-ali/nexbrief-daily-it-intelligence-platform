@@ -79,13 +79,13 @@ const renderSharedLayout = ({ title, description, canonicalPath, jsonLdScripts =
   <link rel="icon" type="image/png" href="/images/favicon.png" />
   <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
   <link rel="apple-touch-icon" href="/images/apple-touch-icon.png" />
-  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/style.css?v=4" />
 </head>
 <body>
   <nav class="navbar scrolled" id="navbar">
     <div class="nav-container">
       <a href="/" class="nav-logo">
-        <img src="/images/logo.svg" alt="NexBrief Logo" class="nav-logo-img" />
+        <img src="/images/logo.svg" alt="NexBrief Logo" class="nav-logo-img" width="30" height="30" />
         <span><span class="logo-nex">Nex</span>Brief</span>
       </a>
       <ul class="nav-links">
@@ -148,7 +148,7 @@ const renderSharedLayout = ({ title, description, canonicalPath, jsonLdScripts =
   </footer>
 
   <div class="toast" id="toast" role="alert" aria-live="polite"></div>
-  <script src="/js/pwa.js"></script>
+  <script src="/js/pwa.js?v=4"></script>
   <script>
     // Mobile nav toggle on Archive page
     document.getElementById('archive-mobile-toggle')?.addEventListener('click', () => {

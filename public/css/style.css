@@ -319,7 +319,7 @@ img { max-width: 100%; display: block; }
   gap: 16px;
   justify-content: center;
   flex-wrap: wrap;
-  margin-bottom: 42px;
+  margin-bottom: 18px;
   animation: fadeInUp 0.6s ease 0.3s both;
 }
 
@@ -1292,7 +1292,7 @@ img { max-width: 100%; display: block; }
   transform: translateY(-1px);
 }
 .hero-archive-link-row {
-  margin: -14px auto 32px;
+  margin: 0 auto 28px;
 }
 .hero-archive-link {
   font-size: 13px;
