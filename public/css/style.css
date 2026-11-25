@@ -660,7 +660,49 @@ img { max-width: 100%; display: block; }
   text-align: left;
 }
 .footer-links a:hover, .footer-link-btn:hover { color: var(--color-primary-light); }
-.footer-bottom { border-top: 1px solid var(--color-border); padding-top: 20px; text-align: center; color: var(--color-text-faint); font-size: 13px; }
+.footer-bottom {
+  border-top: 1px solid var(--color-border);
+  padding-top: 24px;
+  text-align: center;
+  color: var(--color-text-faint);
+  font-size: 13px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.footer-google-search {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--color-text-muted);
+  flex-wrap: wrap;
+}
+
+.footer-search-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 14px;
+  background: rgba(56, 189, 248, 0.1);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  border-radius: 999px;
+  color: #38bdf8 !important;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.footer-search-pill:hover {
+  background: rgba(56, 189, 248, 0.2) !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 14px rgba(56, 189, 248, 0.35);
+  transform: translateY(-1px);
+}
 
 /* ---- Animations ---- */
 @keyframes fadeInDown {
