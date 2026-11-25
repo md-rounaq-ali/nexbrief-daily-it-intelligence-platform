@@ -84,20 +84,33 @@ const renderSharedLayout = ({ title, description, canonicalPath, jsonLdScripts =
 <body>
   <nav class="navbar scrolled" id="navbar">
     <div class="nav-container">
-      <a href="/" class="nav-logo" style="display:flex;align-items:center;gap:10px;">
-        <img src="/images/logo.svg" alt="NexBrief Logo" style="height:32px;width:32px;border-radius:6px;object-fit:cover;" />
+      <a href="/" class="nav-logo">
+        <img src="/images/logo.svg" alt="NexBrief Logo" class="nav-logo-img" />
         <span><span class="logo-nex">Nex</span>Brief</span>
       </a>
       <ul class="nav-links">
         <li><a href="/">Home</a></li>
-        <li><a href="/archive" style="color:var(--color-primary-light);font-weight:700;">Digest Archive</a></li>
-        <li><a href="/#search-section">Search News</a></li>
-        <li><a href="/#topics">Daily Topics</a></li>
-        <li><a href="/#about">About Creator</a></li>
+        <li><a href="/archive" style="color:var(--color-primary-light);font-weight:700;">Archive</a></li>
+        <li><a href="/#search-section">Search</a></li>
+        <li><a href="/#topics">Topics</a></li>
+        <li><a href="/#about">Creator</a></li>
       </ul>
       <div class="nav-actions">
         <button type="button" class="btn btn-ghost btn-sm push-optin-btn" id="archive-push-btn" title="Get 7 AM IST browser alerts">🔔 7 AM Alerts</button>
+        <a href="/?auth=login" class="btn btn-ghost btn-sm">Sign In</a>
         <a href="/?auth=register" class="btn btn-primary btn-sm">Subscribe Free</a>
+        <button type="button" class="mobile-nav-toggle" id="archive-mobile-toggle" aria-label="Open menu">☰</button>
+      </div>
+    </div>
+    <div class="mobile-nav-drawer hidden" id="archive-mobile-drawer">
+      <a href="/">🏠 Home</a>
+      <a href="/archive">🗞️ Archive</a>
+      <a href="/#search-section">🔍 Search News</a>
+      <a href="/#topics">📊 Topics</a>
+      <a href="/#about">👨‍💻 Creator</a>
+      <div class="mobile-nav-drawer-actions">
+        <button type="button" class="btn btn-ghost btn-sm push-optin-btn">🔔 7 AM Alerts</button>
+        <a href="/?auth=login" class="btn btn-ghost btn-sm">Sign In</a>
       </div>
     </div>
   </nav>
@@ -137,6 +150,10 @@ const renderSharedLayout = ({ title, description, canonicalPath, jsonLdScripts =
   <div class="toast" id="toast" role="alert" aria-live="polite"></div>
   <script src="/js/pwa.js"></script>
   <script>
+    // Mobile nav toggle on Archive page
+    document.getElementById('archive-mobile-toggle')?.addEventListener('click', () => {
+      document.getElementById('archive-mobile-drawer')?.classList.toggle('hidden');
+    });
     // Handle Copy Link buttons on archive cards
     document.addEventListener('click', async (e) => {
       const btn = e.target.closest('.copy-share-btn');

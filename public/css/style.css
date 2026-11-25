@@ -98,41 +98,61 @@ img { max-width: 100%; display: block; }
   box-shadow: var(--shadow-md);
 }
 .nav-container {
-  max-width: 1100px;
+  max-width: 1180px;
   margin: 0 auto;
   padding: 0 24px;
   height: 68px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 24px;
 }
 .nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   font-size: 22px;
   font-weight: 900;
   color: var(--color-text);
   letter-spacing: -0.5px;
   text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.nav-logo-img {
+  height: 30px;
+  width: 30px;
+  border-radius: 6px;
+  object-fit: cover;
+  flex-shrink: 0;
 }
 .logo-nex { color: var(--color-primary-light); }
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 22px;
+  justify-content: center;
+  gap: 28px;
   list-style: none;
 }
 .nav-links a {
   color: var(--color-text-muted);
   font-size: 14px;
   font-weight: 500;
+  white-space: nowrap;
   transition: color var(--transition-fast);
 }
 .nav-links a:hover {
   color: var(--color-primary-light);
 }
-@media (max-width: 1024px) {
+@media (max-width: 960px) {
   .nav-links { display: none; }
 }
-.nav-actions { display: flex; align-items: center; gap: 12px; }
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
 
 /* ---- Buttons ---- */
 .btn {
@@ -1237,11 +1257,52 @@ img { max-width: 100%; display: block; }
   padding-top: 8px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
-@media (max-width: 1024px) {
+@media (max-width: 960px) {
   .mobile-nav-toggle { display: inline-flex; }
 }
 
-/* ---- Live Countdown Timer Bar ---- */
+/* ---- Live Countdown Timer Bar & Utility Row ---- */
+.hero-utility-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 0 auto 26px;
+}
+.hero-util-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(30, 41, 59, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: var(--color-text-2);
+  font-family: var(--font-family);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+.hero-util-pill:hover {
+  border-color: var(--color-primary-light);
+  color: #fff;
+  transform: translateY(-1px);
+}
+.hero-archive-link-row {
+  margin: -14px auto 32px;
+}
+.hero-archive-link {
+  font-size: 13px;
+  font-weight: 600;
+  color: #94a3b8;
+  transition: color var(--transition-fast);
+}
+.hero-archive-link:hover {
+  color: #818cf8;
+}
 .hero-countdown-bar,
 .archive-countdown-bar {
   display: inline-flex;
@@ -1251,12 +1312,15 @@ img { max-width: 100%; display: block; }
   background: rgba(15, 23, 42, 0.78);
   border: 1px solid rgba(99, 102, 241, 0.35);
   border-radius: 100px;
-  padding: 8px 20px;
-  margin: 0 auto 24px;
+  padding: 8px 18px;
+  margin: 0;
   font-size: 13px;
   color: var(--color-text-2);
   box-shadow: 0 4px 20px rgba(99, 102, 241, 0.15);
   flex-wrap: wrap;
+}
+.archive-countdown-bar {
+  margin: 0 auto 20px;
 }
 .countdown-pulse-dot {
   width: 8px;

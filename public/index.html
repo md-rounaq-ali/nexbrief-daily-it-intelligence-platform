@@ -286,18 +286,16 @@
   <!-- Navigation -->
   <nav class="navbar" id="navbar">
     <div class="nav-container">
-      <a href="/" class="nav-logo" style="display:flex;align-items:center;gap:10px;"><img src="/images/logo.svg" alt="NexBrief Logo" style="height:32px;width:32px;border-radius:6px;object-fit:cover;" /><span><span class="logo-nex">Nex</span>Brief</span></a>
+      <a href="/" class="nav-logo"><img src="/images/logo.svg" alt="NexBrief Logo" class="nav-logo-img" /><span><span class="logo-nex">Nex</span>Brief</span></a>
       <ul class="nav-links">
-        <li><a href="#search-section">Search News</a></li>
+        <li><a href="#search-section">Search</a></li>
         <li><a href="/archive">Archive</a></li>
-        <li><a href="#topics">Daily News</a></li>
-        <li><a href="#features">Why NexBrief</a></li>
+        <li><a href="#topics">Topics</a></li>
+        <li><a href="#features">Features</a></li>
         <li><a href="#faq">FAQ</a></li>
         <li><a href="#about">Creator</a></li>
       </ul>
       <div class="nav-actions">
-        <button type="button" class="btn btn-ghost btn-sm pwa-install-btn hidden" id="pwa-install-btn" title="Install NexBrief App">📲 Install</button>
-        <button type="button" class="btn btn-ghost btn-sm push-optin-btn" id="hero-push-btn" title="Enable 7 AM IST browser notifications">🔔 7 AM Alerts</button>
         <button class="btn btn-ghost" id="nav-login-btn">Sign In</button>
         <button class="btn btn-primary" id="nav-register-btn">Get Started Free</button>
         <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Open menu">☰</button>
@@ -306,10 +304,10 @@
     <div class="mobile-nav-drawer hidden" id="mobile-nav-drawer">
       <a href="#search-section">🔍 Search News</a>
       <a href="/archive">🗞️ Public Archive</a>
-      <a href="#topics">📊 Daily Topics</a>
-      <a href="#features">✨ Why NexBrief</a>
+      <a href="#topics">📊 Topics</a>
+      <a href="#features">✨ Features</a>
       <a href="#faq">❓ FAQ</a>
-      <a href="#about">👨‍💻 About Creator</a>
+      <a href="#about">👨‍💻 Creator</a>
       <div class="mobile-nav-drawer-actions">
         <button type="button" class="btn btn-ghost btn-sm push-optin-btn">🔔 7 AM Alerts</button>
         <button type="button" class="btn btn-ghost btn-sm pwa-install-btn hidden">📲 Install App</button>
@@ -338,11 +336,15 @@
         NexBrief by <strong>Md Rounaq Ali</strong> is India's premier daily IT news &amp; tech sector briefing — <strong>50% IT &amp; Jobs</strong>,
         <strong>30% Education &amp; Research</strong>, <strong>20% World Headlines</strong> — enhanced with <strong>AI "Why This Matters"</strong> insights every morning at <strong>7:00 AM IST</strong>.
       </p>
-      <div class="hero-countdown-bar" aria-live="polite">
-        <span class="countdown-pulse-dot"></span>
-        <span>Next digest in:</span>
-        <strong class="hero-countdown-clock" id="hero-countdown" data-countdown>--:--:--</strong>
-        <span class="countdown-subtag">· 7:00 AM IST Daily</span>
+      <div class="hero-utility-row">
+        <div class="hero-countdown-bar" aria-live="polite">
+          <span class="countdown-pulse-dot"></span>
+          <span>Next digest in:</span>
+          <strong class="hero-countdown-clock" id="hero-countdown" data-countdown>--:--:--</strong>
+          <span class="countdown-subtag">· 7:00 AM IST Daily</span>
+        </div>
+        <button type="button" class="hero-util-pill push-optin-btn" id="hero-push-btn" title="Enable 7 AM IST browser notifications">🔔 7 AM Alerts</button>
+        <button type="button" class="hero-util-pill pwa-install-btn hidden" id="pwa-install-btn" title="Install NexBrief App">📲 Install App</button>
       </div>
       <div class="hero-cta">
         <button class="btn btn-primary btn-lg" id="hero-register-btn">
@@ -351,9 +353,9 @@
         <button class="btn btn-ghost btn-lg" id="hero-login-btn">
           Sign In to Dashboard →
         </button>
-        <a href="/archive" class="btn btn-ghost btn-lg">
-          🗞️ Browse Past Digests
-        </a>
+      </div>
+      <div class="hero-archive-link-row">
+        <a href="/archive" class="hero-archive-link">🗞️ Explore the Public SEO Digest Archive →</a>
       </div>
       <div class="hero-stats">
         <div class="stat-item">
