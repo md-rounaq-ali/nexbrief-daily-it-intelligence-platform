@@ -129,7 +129,7 @@ img { max-width: 100%; display: block; }
 .nav-links a:hover {
   color: var(--color-primary-light);
 }
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
   .nav-links { display: none; }
 }
 .nav-actions { display: flex; align-items: center; gap: 12px; }
@@ -1237,7 +1237,7 @@ img { max-width: 100%; display: block; }
   padding-top: 8px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
   .mobile-nav-toggle { display: inline-flex; }
 }
 

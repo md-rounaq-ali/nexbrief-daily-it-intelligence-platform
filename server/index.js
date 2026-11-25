@@ -72,7 +72,16 @@ app.get('/sitemap.xml', async (req, res) => {
   res.send(xml);
 });
 
-// Serve static frontend files (ensure sw.js & manifest.json get clean no-cache/proper headers)
+// Serve PWA & favicon assets explicitly with clean headers before static fallback
+app.get('/favicon.ico', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/images/favicon.png'));
+});
+app.get('/favicon.png', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/images/favicon.png'));
+});
+app.get('/favicon.svg', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/images/favicon.svg'));
+});
 app.get('/sw.js', (req, res) => {
   res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
   res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
@@ -106,17 +115,6 @@ app.get('/dashboard', (req, res) => {
 });
 app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/admin.html'));
-});
-
-// Serve favicon explicitly so Google's favicon crawler gets the real image
-app.get('/favicon.ico', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/images/favicon.png'));
-});
-app.get('/favicon.png', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/images/favicon.png'));
-});
-app.get('/favicon.svg', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/images/favicon.svg'));
 });
 
 app.get('*', (req, res) => {
