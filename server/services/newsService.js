@@ -1,37 +1,47 @@
 const fetch = require('node-fetch');
 const Digest = require('../models/Digest');
-const { getTodayIST, getYesterdayIST } = require('../utils/dateIST');
+const { getTodayIST, getDaysAgoIST } = require('../utils/dateIST');
 const { cleanNewsText, enrichDigestSections } = require('./aiService');
 
 const NEWS_API_KEY = process.env.NEWS_API_KEY;
 const BASE_URL = 'https://newsapi.org/v2';
 
 /**
- * Premium royalty-free stock images from Unsplash to ensure the platform
- * always looks highly professional and never shows empty gray placeholder blocks.
+ * Premium royalty-free stock images from Unsplash so cards never appear empty.
  */
 const categoryStockImages = {
-  Jobs:         'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&w=600&q=80',
-  AI:           'https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=600&q=80',
-  Cybersecurity:'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=600&q=80',
-  Software:     'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=600&q=80',
-  Cloud:        'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=600&q=80',
-  IT:           'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80',
-  Technology:   'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=600&q=80',
-  Science:      'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=600&q=80',
-  Education:    'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=600&q=80',
-  Research:     'https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=600&q=80',
-  Business:     'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&q=80',
-  General:      'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=600&q=80'
+  Jobs:          'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&w=600&q=80',
+  AI:            'https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=600&q=80',
+  Cybersecurity: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=600&q=80',
+  Software:      'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=600&q=80',
+  Cloud:         'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=600&q=80',
+  IT:            'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80',
+  Technology:    'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=600&q=80',
+  Science:       'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=600&q=80',
+  Education:     'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=600&q=80',
+  Research:      'https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=600&q=80',
+  Business:      'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&q=80',
+  General:       'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=600&q=80',
 };
 
 const getCategoryStockImage = (category) => {
   return categoryStockImages[category] || categoryStockImages.General;
 };
 
+const decodeXmlEntities = (str = '') => {
+  return String(str)
+    .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&apos;/g, "'")
+    .replace(/&nbsp;/g, ' ');
+};
+
 /**
  * Load titles from the last N days of sent digests to prevent repeating articles.
- * Returns a Set of normalized (lowercased, trimmed) titles.
  */
 const loadRecentDigestTitles = async (days = 3) => {
   const titles = new Set();
@@ -60,15 +70,18 @@ const loadRecentDigestTitles = async (days = 3) => {
 };
 
 /**
- * Helper to fetch articles safely from NewsAPI with error handling
+ * Safe NewsAPI JSON fetcher with timeout
  */
 const safeFetchArticles = async (url) => {
   if (!NEWS_API_KEY) {
     console.warn('⚠️ NEWS_API_KEY is not defined in environment variables.');
     return [];
   }
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 9000);
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, { signal: controller.signal });
+    clearTimeout(timeoutId);
     if (!response.ok) {
       console.warn(`NewsAPI non-ok response: ${response.status}`);
       return [];
@@ -80,14 +93,75 @@ const safeFetchArticles = async (url) => {
     }
     return data.articles || [];
   } catch (error) {
+    clearTimeout(timeoutId);
     console.error('Error fetching from NewsAPI:', error.message);
     return [];
   }
 };
 
 /**
+ * Fetch real-time India-focused news from Google News India RSS (zero delay, free fallback & India booster)
+ */
+const safeFetchGoogleNewsRSS = async (searchQuery, markAsIndia = true, limit = 20) => {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 9000);
+  try {
+    const rssUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(searchQuery + ' when:3d')}&hl=en-IN&gl=IN&ceid=IN:en`;
+    const response = await fetch(rssUrl, {
+      headers: { 'User-Agent': 'NexBrief/1.0 (+https://nexbrief-news.onrender.com)' },
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
+    if (!response.ok) return [];
+
+    const xml = await response.text();
+    const itemMatches = xml.match(/<item>[\s\S]*?<\/item>/g) || [];
+    const articles = [];
+    const maxAgeMs = 4 * 24 * 60 * 60 * 1000;
+
+    for (const block of itemMatches) {
+      if (articles.length >= limit) break;
+      const rawTitle = (block.match(/<title>([\s\S]*?)<\/title>/) || [])[1] || '';
+      const rawLink = (block.match(/<link>([\s\S]*?)<\/link>/) || [])[1] || '';
+      const rawPub = (block.match(/<pubDate>([\s\S]*?)<\/pubDate>/) || [])[1] || '';
+      const rawSource = (block.match(/<source[^>]*>([\s\S]*?)<\/source>/) || [])[1] || '';
+
+      const sourceName = cleanNewsText(decodeXmlEntities(rawSource)) || 'India News';
+      let title = cleanNewsText(decodeXmlEntities(rawTitle));
+      // Google News RSS appends " - Source Name" to titles
+      if (sourceName && title.endsWith(` - ${sourceName}`)) {
+        title = title.slice(0, -(` - ${sourceName}`.length)).trim();
+      } else {
+        title = title.replace(/\s+-\s+[^-]+$/, '').trim();
+      }
+
+      const url = decodeXmlEntities(rawLink).trim();
+      if (!title || !url || !/^https?:\/\//i.test(url)) continue;
+
+      const pubDate = rawPub ? new Date(rawPub) : new Date();
+      if (Number.isNaN(pubDate.getTime()) || Date.now() - pubDate.getTime() > maxAgeMs) continue;
+
+      articles.push({
+        title,
+        description: `Published by ${sourceName}. Open full coverage for complete details, deadlines, and technical breakdown.`,
+        url,
+        urlToImage: null,
+        source: { name: sourceName },
+        publishedAt: pubDate.toISOString(),
+        _forceIndia: markAsIndia,
+      });
+    }
+
+    return articles;
+  } catch (err) {
+    clearTimeout(timeoutId);
+    console.warn('Google News RSS warning:', err.message);
+    return [];
+  }
+};
+
+/**
  * STRICT RELEVANCE FILTER
- * Rejects articles that are clearly irrelevant to IT students.
  */
 const IRRELEVANT_KEYWORDS = [
   'gta', 'grand theft auto', 'playstation', 'xbox', 'nintendo', 'gaming',
@@ -112,7 +186,8 @@ const isRelevantArticle = (title, description) => {
 /**
  * INDIA DETECTION — EXPANDED
  */
-const isIndiaRelated = (title, description, source) => {
+const isIndiaRelated = (title, description, source, forceIndia = false) => {
+  if (forceIndia) return true;
   const text = `${title} ${description || ''} ${source || ''}`.toLowerCase();
   const indiaKeywords = [
     'india', 'indian', 'bharat',
@@ -130,7 +205,8 @@ const isIndiaRelated = (title, description, source) => {
     'paytm', 'ola', 'flipkart', 'jio', 'reliance', 'adani',
     'angel one', 'zoho', 'accenture india', 'amazon india',
     'microsoft india', 'google india', 'oracle india', 'ibm india',
-    'deloitte india', 'capgemini india',
+    'deloitte india', 'capgemini india', 'times of india', 'economic times',
+    'hindustan times', 'moneycontrol', 'livemint', 'ndtv', 'business standard',
     'nifty', 'sensex', 'bse', 'nse',
     'smart india hackathon', 'hiring india', 'placement india',
     'tier 2', 'campus recruitment india',
@@ -193,7 +269,7 @@ const mixIndiaAndWorld = (liveArticles, min, max, categorizeFn, recentTitles) =>
       source: a.source?.name || 'News Source',
       publishedAt: a.publishedAt || new Date().toISOString(),
       category: cat,
-      isIndia: isIndiaRelated(cleanTitle, cleanDesc, a.source?.name),
+      isIndia: isIndiaRelated(cleanTitle, cleanDesc, a.source?.name, Boolean(a._forceIndia)),
     });
   }
 
@@ -237,7 +313,7 @@ const categorizeIT = (text) => {
   if (
     t.includes('artificial intelligence') || t.includes(' ai ') || t.includes('machine learning') ||
     t.includes('chatgpt') || t.includes('llm') || t.includes('generative') || t.includes('deep learning') ||
-    t.includes('copilot') || t.includes('openai') || t.includes('gemini ai') || t.includes('claude ai') ||
+    t.includes('copilot') || t.includes('openai') || t.includes('gemini') || t.includes('claude') ||
     t.includes('agentic') || t.includes('large language model') || t.includes('neural network')
   ) return 'AI';
 
@@ -254,7 +330,7 @@ const categorizeIT = (text) => {
     t.includes('flutter') || t.includes('dart') || t.includes('swift') || t.includes('kotlin') ||
     t.includes('next.js') || t.includes('vue') || t.includes('django') || t.includes('fastapi') ||
     t.includes('mongodb') || t.includes('postgresql') || t.includes('redis') || t.includes('vs code') ||
-    t.includes('visual studio') || t.includes('api release') || t.includes('sdk') || t.includes('release')
+    t.includes('visual studio') || t.includes('api') || t.includes('sdk') || t.includes('release')
   ) return 'Software';
 
   if (
@@ -292,24 +368,39 @@ const categorizeEducation = (text) => {
   return 'Education';
 };
 
+/**
+ * Helper to build NewsAPI `/everything` URL using a 3-day IST date range
+ * (prevents empty results right after midnight IST due to NewsAPI's 24h free-tier lag)
+ */
+const buildEverythingUrl = (query, pageSize = 25) => {
+  const fromDate = getDaysAgoIST(3);
+  const toDate = getTodayIST();
+  return `${BASE_URL}/everything?q=${encodeURIComponent(query)}&language=en&from=${fromDate}&to=${toDate}&sortBy=publishedAt&pageSize=${pageSize}&apiKey=${NEWS_API_KEY}`;
+};
+
+/**
+ * fetchITNews — Hybrid NewsAPI + Google News India RSS
+ */
 const fetchITNews = async (recentTitles) => {
   try {
-    const yesterday = getYesterdayIST();
-    const today = getTodayIST();
+    const indiaJobsUrl = buildEverythingUrl(
+      'India AND (hiring OR recruitment OR internship OR "campus placement" OR fresher OR TCS OR Infosys OR Wipro OR HCL OR Cognizant OR Accenture)',
+      25
+    );
+    const devToolsUrl = buildEverythingUrl(
+      '(OpenAI OR ChatGPT OR Gemini OR Claude OR "Agentic AI" OR React OR Python OR GitHub OR cybersecurity OR AWS OR Kubernetes) AND (developer OR software OR AI OR cloud OR programming)',
+      25
+    );
+    const globalTechUrl = `${BASE_URL}/top-headlines?category=technology&language=en&pageSize=30&apiKey=${NEWS_API_KEY}`;
 
-    const indiaJobsUrl = `${BASE_URL}/everything?q=(India AND (hiring OR recruitment OR internship OR "off campus" OR "campus placement" OR fresher OR "entry level" OR TCS OR Infosys OR Wipro OR HCL OR Cognizant OR "Tech Mahindra" OR Accenture OR Capgemini OR Deloitte OR "LTIMindtree" OR Mphasis OR Hexaware OR Persistent))&language=en&from=${yesterday}&to=${today}&sortBy=publishedAt&pageSize=30&apiKey=${NEWS_API_KEY}`;
-    const devToolsUrl = `${BASE_URL}/everything?q=((ChatGPT OR "Gemini AI" OR "Claude AI" OR OpenAI OR LLM OR "Agentic AI" OR React OR "Next.js" OR Python OR "VS Code" OR GitHub OR "open source" OR framework OR API OR "developer tools" OR "software release" OR TypeScript OR Flutter OR Kubernetes OR DevOps) AND (developer OR engineer OR programming OR coding OR software OR student))&language=en&from=${yesterday}&to=${today}&sortBy=publishedAt&pageSize=30&apiKey=${NEWS_API_KEY}`;
-    const indiaTechUrl = `${BASE_URL}/top-headlines?category=technology&country=in&pageSize=30&apiKey=${NEWS_API_KEY}`;
-    const securityCloudUrl = `${BASE_URL}/everything?q=((cybersecurity OR "data breach" OR "zero day" OR malware OR ransomware OR "cloud computing" OR AWS OR Azure OR DevOps OR Kubernetes OR "CERT-IN") AND (India OR company OR enterprise OR developer OR students))&language=en&from=${yesterday}&to=${today}&sortBy=publishedAt&pageSize=20&apiKey=${NEWS_API_KEY}`;
-
-    const [indiaJobs, devTools, indiaTech, securityCloud] = await Promise.all([
-      safeFetchArticles(indiaJobsUrl),
+    const [indiaJobsRss, devTools, indiaJobsApi, globalTech] = await Promise.all([
+      safeFetchGoogleNewsRSS('India IT hiring TCS Infosys Wipro internship fresher software jobs', true, 16),
       safeFetchArticles(devToolsUrl),
-      safeFetchArticles(indiaTechUrl),
-      safeFetchArticles(securityCloudUrl),
+      safeFetchArticles(indiaJobsUrl),
+      safeFetchArticles(globalTechUrl),
     ]);
 
-    const combined = [...indiaJobs, ...indiaTech, ...devTools, ...securityCloud];
+    const combined = [...indiaJobsRss, ...indiaJobsApi, ...devTools, ...globalTech];
     const results = mixIndiaAndWorld(combined, 10, 20, categorizeIT, recentTitles);
 
     results.sort((a, b) => {
@@ -328,22 +419,24 @@ const fetchITNews = async (recentTitles) => {
   }
 };
 
+/**
+ * fetchEducationNews — Hybrid NewsAPI + Google News India RSS
+ */
 const fetchEducationNews = async (recentTitles) => {
   try {
-    const yesterday = getYesterdayIST();
-    const today = getTodayIST();
-
-    const indiaEduUrl = `${BASE_URL}/everything?q=(India AND (placement OR "campus recruitment" OR scholarship OR "GATE 2026" OR "GATE 2025" OR IIT OR NIT OR BITS OR IIIT OR AICTE OR UGC OR "B.Tech" OR engineering OR "college admission" OR hackathon OR "internship for students" OR edtech OR NPTEL OR SWAYAM OR "Smart India Hackathon"))&language=en&from=${yesterday}&to=${today}&sortBy=publishedAt&pageSize=30&apiKey=${NEWS_API_KEY}`;
+    const indiaEduUrl = buildEverythingUrl(
+      'India AND (GATE OR IIT OR NIT OR AICTE OR UGC OR "B.Tech" OR scholarship OR "campus placement" OR ISRO OR hackathon)',
+      25
+    );
     const globalScienceUrl = `${BASE_URL}/top-headlines?category=science&language=en&pageSize=20&apiKey=${NEWS_API_KEY}`;
-    const researchUrl = `${BASE_URL}/everything?q=(ISRO OR NASA OR "space mission" OR "AI research" OR "scientific breakthrough" OR "quantum computing" OR "new study" OR researchers OR "published research" OR "satellite launch")&language=en&from=${yesterday}&to=${today}&sortBy=publishedAt&pageSize=20&apiKey=${NEWS_API_KEY}`;
 
-    const [indiaEdu, globalSci, research] = await Promise.all([
+    const [indiaEduRss, indiaEduApi, globalSci] = await Promise.all([
+      safeFetchGoogleNewsRSS('India B.Tech IIT NIT GATE AICTE UGC placement scholarship ISRO', true, 12),
       safeFetchArticles(indiaEduUrl),
       safeFetchArticles(globalScienceUrl),
-      safeFetchArticles(researchUrl),
     ]);
 
-    const combined = [...indiaEdu, ...globalSci, ...research];
+    const combined = [...indiaEduRss, ...indiaEduApi, ...globalSci];
     return mixIndiaAndWorld(combined, 6, 12, categorizeEducation, recentTitles);
   } catch (error) {
     console.error('Error fetching Education news:', error.message);
@@ -351,22 +444,24 @@ const fetchEducationNews = async (recentTitles) => {
   }
 };
 
+/**
+ * fetchGeneralNews — Hybrid NewsAPI + Google News India RSS
+ */
 const fetchGeneralNews = async (recentTitles) => {
   try {
-    const yesterday = getYesterdayIST();
-    const today = getTodayIST();
+    const globalPolicyUrl = buildEverythingUrl(
+      '(economy OR "startup funding" OR fintech OR "Digital India" OR "AI regulation" OR semiconductor OR GCC) AND (India OR global OR tech)',
+      20
+    );
+    const globalBizUrl = `${BASE_URL}/top-headlines?category=business&language=en&pageSize=20&apiKey=${NEWS_API_KEY}`;
 
-    const indiaBusinessUrl = `${BASE_URL}/top-headlines?category=business&country=in&pageSize=20&apiKey=${NEWS_API_KEY}`;
-    const indiaGeneralUrl = `${BASE_URL}/top-headlines?country=in&pageSize=15&apiKey=${NEWS_API_KEY}`;
-    const globalUrl = `${BASE_URL}/everything?q=((economy OR "startup funding" OR unicorn OR "tech policy" OR "AI regulation" OR "digital india" OR fintech OR "electric vehicle" OR "renewable energy" OR GCC OR "Global Capability Centre") AND (India OR global OR world OR startup))&language=en&from=${yesterday}&to=${today}&sortBy=publishedAt&pageSize=15&apiKey=${NEWS_API_KEY}`;
-
-    const [indiaBus, indiaGen, global] = await Promise.all([
-      safeFetchArticles(indiaBusinessUrl),
-      safeFetchArticles(indiaGeneralUrl),
-      safeFetchArticles(globalUrl),
+    const [indiaBizRss, globalPolicyApi, globalBiz] = await Promise.all([
+      safeFetchGoogleNewsRSS('India tech startup funding economy Digital India fintech GCC', true, 10),
+      safeFetchArticles(globalPolicyUrl),
+      safeFetchArticles(globalBizUrl),
     ]);
 
-    const combined = [...indiaBus, ...indiaGen, ...global];
+    const combined = [...indiaBizRss, ...globalPolicyApi, ...globalBiz];
     return mixIndiaAndWorld(combined, 4, 8, () => 'General', recentTitles);
   } catch (error) {
     console.error('Error fetching General news:', error.message);
@@ -375,7 +470,7 @@ const fetchGeneralNews = async (recentTitles) => {
 };
 
 const fetchAllNewsForDigest = async () => {
-  console.log('📰 Fetching FRESH student-focused news (60% India / 40% World) with relevance filter & AI summaries...');
+  console.log('📰 Fetching FRESH student-focused news (60% India / 40% World) via NewsAPI + India RSS...');
 
   const recentTitles = await loadRecentDigestTitles(3);
 
@@ -385,7 +480,6 @@ const fetchAllNewsForDigest = async () => {
     fetchGeneralNews(recentTitles),
   ]);
 
-  // Enrich every article with AI "Why This Matters" summary
   const { itNews, educationNews, generalNews } = await enrichDigestSections({
     itNews: rawItNews,
     educationNews: rawEduNews,
@@ -395,7 +489,7 @@ const fetchAllNewsForDigest = async () => {
   console.log(`   ✅ IT: ${itNews.length} articles | Education: ${educationNews.length} | World: ${generalNews.length}`);
 
   if (itNews.length === 0 && educationNews.length === 0 && generalNews.length === 0) {
-    console.warn('   ⚠️ No fresh news found. API may be exhausted or all articles were deduped.');
+    console.warn('   ⚠️ No fresh news found across all sources.');
   }
 
   return { itNews, educationNews, generalNews };

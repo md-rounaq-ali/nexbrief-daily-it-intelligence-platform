@@ -16,9 +16,14 @@ const runDailyDigest = async (triggerSource = 'cron') => {
   console.log(`\n🗞️  Daily digest starting for ${today} [${triggerSource}]...`);
 
   try {
-    // Check if already sent today
+    // Check if a complete digest was already sent today (allow retry if a section was previously 0)
     const existing = await Digest.findOne({ date: today });
-    if (existing && existing.status === 'sent') {
+    if (
+      existing &&
+      existing.status === 'sent' &&
+      existing.itNews?.length > 0 &&
+      existing.generalNews?.length > 0
+    ) {
       console.log(`⚠️  Already sent for ${today}. Skipping.`);
       return { skipped: true, reason: 'Already sent today.' };
     }
@@ -52,11 +57,11 @@ const runDailyDigest = async (triggerSource = 'cron') => {
     // Send 7 AM IST Web Push Notification to browser subscribers
     const pushReport = await sendDailyDigestPush(digest);
 
-    // Update digest status
+    // Update digest status (only mark sent if we actually have news articles)
     digest.sentAt = new Date();
     digest.recipientCount = successCount;
     digest.pushSentCount = pushReport.sent || 0;
-    digest.status = 'sent';
+    digest.status = (itNews.length > 0 || educationNews.length > 0 || generalNews.length > 0) ? 'sent' : 'failed';
     await digest.save();
 
     if (subscribers.length > 0) {

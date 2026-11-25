@@ -63,9 +63,9 @@ router.get('/today', protect, async (req, res) => {
   try {
     const today = getTodayIST();
 
-    // Check if we have today's digest cached
+    // Check if we have a complete cached digest (require all 3 sections to be non-empty so partial empty caches self-heal)
     let digest = await Digest.findOne({ date: today });
-    if (digest && (digest.itNews.length > 0 || digest.educationNews?.length > 0 || digest.generalNews.length > 0)) {
+    if (digest && digest.itNews?.length > 0 && digest.educationNews?.length > 0 && digest.generalNews?.length > 0) {
       return res.json({ success: true, source: 'cache', digest: normalizeDigestForClient(digest) });
     }
 

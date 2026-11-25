@@ -115,7 +115,7 @@ const generateGeminiBatchInsights = async (articles) => {
 
   for (const model of modelsToTry) {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 14000);
+    const timeoutId = setTimeout(() => controller.abort(), 18000);
     try {
       const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`;
       const response = await fetch(endpoint, {
@@ -181,7 +181,7 @@ const enrichArticlesWithInsights = async (articles = []) => {
     description: cleanNewsText(a.description) || 'Click to read the full intelligence report.',
   }));
 
-  const chunkSize = 24;
+  const chunkSize = 15;
   for (let start = 0; start < prepared.length; start += chunkSize) {
     const slice = prepared.slice(start, start + chunkSize);
     const geminiMap = await generateGeminiBatchInsights(slice);
