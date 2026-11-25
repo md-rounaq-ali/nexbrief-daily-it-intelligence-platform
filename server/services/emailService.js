@@ -1,4 +1,5 @@
 const fetch = require('node-fetch');
+const { cleanNewsText, buildSmartFallbackInsight } = require('./aiService');
 
 // Brevo API Key
 const BREVO_API_KEY = process.env.BREVO_API_KEY || process.env.BREVO_SMTP_PASS;
@@ -6,10 +7,27 @@ const BREVO_API_URL = 'https://api.brevo.com/v3/smtp/email';
 
 // Category badge colors for email
 const categoryColors = {
-  AI: '#6366f1', Cybersecurity: '#ef4444', Software: '#10b981',
-  Cloud: '#3b82f6', IT: '#8b5cf6', Education: '#f59e0b',
-  Research: '#06b6d4', Science: '#ec4899', General: '#64748b',
+  Jobs: '#059669',
+  AI: '#6366f1',
+  Cybersecurity: '#ef4444',
+  Software: '#10b981',
+  Cloud: '#3b82f6',
+  IT: '#8b5cf6',
+  Technology: '#3b82f6',
+  Education: '#f59e0b',
+  Research: '#06b6d4',
+  Science: '#ec4899',
+  Business: '#64748b',
+  General: '#64748b',
 };
+
+const escapeHtmlEmail = (str = '') =>
+  String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 
 /**
  * Core helper to send email via Brevo Transactional HTTP API (runs over Port 443 / HTTPS)
@@ -20,7 +38,7 @@ const sendEmailViaAPI = async ({ toEmail, toName, subject, htmlContent }) => {
     const response = await fetch(BREVO_API_URL, {
       method: 'POST',
       headers: {
-        'accept': 'application/json',
+        accept: 'application/json',
         'api-key': BREVO_API_KEY,
         'content-type': 'application/json',
       },
@@ -35,8 +53,8 @@ const sendEmailViaAPI = async ({ toEmail, toName, subject, htmlContent }) => {
             name: toName || toEmail.split('@')[0],
           },
         ],
-        subject: subject,
-        htmlContent: htmlContent,
+        subject,
+        htmlContent,
       }),
     });
 
@@ -55,9 +73,6 @@ const sendEmailViaAPI = async ({ toEmail, toName, subject, htmlContent }) => {
 
 /**
  * Ensures an email is unblocked on Brevo Transactional Blocklist.
- * If a user previously clicked "Unsubscribe" in their email client (like Gmail),
- * Brevo blocks all future transactional emails (including OTPs).
- * Calling this removes the block so OTPs and newsletters can be received.
  */
 const unblockEmailIfBlocked = async (email) => {
   if (!email || !BREVO_API_KEY) return;
@@ -66,67 +81,81 @@ const unblockEmailIfBlocked = async (email) => {
       method: 'DELETE',
       headers: {
         'api-key': BREVO_API_KEY,
-        'accept': 'application/json',
+        accept: 'application/json',
       },
     });
     if (res.status === 204) {
       console.log(`🔓 Auto-unblocked ${email} from Brevo transactional blocklist.`);
     }
   } catch (err) {
-    // Non-blocking; continue sending email
+    // Non-blocking
   }
 };
 
 // ─── Daily Digest Email Template ──────────────────────────────────────────────
 const formatDescriptionToBullets = (desc) => {
-  if (!desc) return '';
-  
-  // Split description by sentence boundaries: period followed by space
-  const rawParts = desc.split(/\.\s+/);
+  const cleaned = cleanNewsText(desc);
+  if (!cleaned) return '';
+
+  const rawParts = cleaned.split(/\.\s+/);
   const sentences = [];
   let currentSentence = '';
-  
+
   for (let i = 0; i < rawParts.length; i++) {
     const part = rawParts[i].trim();
     if (!part) continue;
-    
-    if (currentSentence) {
-      currentSentence += '. ' + part;
-    } else {
-      currentSentence = part;
-    }
-    
-    // Determine if we should push this part or keep combining (e.g., if it's an abbreviation)
+
+    currentSentence = currentSentence ? `${currentSentence}. ${part}` : part;
+
     const words = part.split(/\s+/);
-    const lastWord = words[words.length - 1].replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "");
+    const lastWord = words[words.length - 1].replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, '');
     const isAbbreviation = ['us', 'mr', 'ms', 'dr', 'prof', 'tech', 'inc', 'ltd', 'vs', 'btech', 'mtech', 'ai'].includes(lastWord.toLowerCase());
-    
+
     if (!isAbbreviation || i === rawParts.length - 1) {
-      sentences.push(currentSentence.endsWith('.') ? currentSentence : currentSentence + '.');
+      sentences.push(currentSentence.endsWith('.') ? currentSentence : `${currentSentence}.`);
       currentSentence = '';
     }
   }
 
-  // Format as bullet points
   return `
-    <ul style="margin:0 0 14px 0;padding-left:20px;color:#94a3b8;font-size:13px;line-height:1.6;">
-      ${sentences.map(s => `<li style="margin-bottom:6px;">${s}</li>`).join('')}
+    <ul style="margin:0 0 12px 0;padding-left:20px;color:#94a3b8;font-size:13px;line-height:1.6;">
+      ${sentences.map((s) => `<li style="margin-bottom:5px;">${escapeHtmlEmail(s)}</li>`).join('')}
     </ul>
   `;
 };
 
-const buildDigestEmailHtml = (user, digest, dateStr) => {
+const buildDigestEmailHtml = (user, digest, dateStr, { isTest = false } = {}) => {
+  const appBase = (process.env.APP_URL || 'https://nexbrief-news.onrender.com').replace(/\/$/, '');
+  const trackingUrl = `${appBase}/api/track/open?digestId=${encodeURIComponent(digest?._id || '')}&date=${encodeURIComponent(digest?.date || '')}&userId=${encodeURIComponent(user?._id || '')}${isTest ? '&test=1' : ''}`;
+  const archiveUrl = digest?.date ? `${appBase}/archive/${digest.date}` : `${appBase}/archive`;
+
   const renderCards = (articles) =>
-    (articles || []).map(a => `
+    (articles || [])
+      .map((a) => {
+        const why = a.whyItMatters || buildSmartFallbackInsight(a);
+        const indiaBadge = a.isIndia
+          ? '<span style="display:inline-block;background:rgba(16,185,129,0.16);border:1px solid rgba(16,185,129,0.35);color:#6ee7b7;font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;margin-left:6px;">🇮🇳 INDIA</span>'
+          : '';
+        return `
     <div style="background:#1e293b;border:1px solid #334155;border-radius:12px;padding:20px;margin-bottom:16px;">
-      <div style="display:inline-block;background:${categoryColors[a.category] || '#6366f1'};color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:0.5px;margin-bottom:10px;text-transform:uppercase;">${a.category}</div>
-      <h3 style="color:#f1f5f9;font-size:15px;font-weight:700;margin:0 0 8px 0;line-height:1.4;">${a.title}</h3>
-      ${formatDescriptionToBullets(a.description)}
-      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
-        <span style="color:#64748b;font-size:12px;">📰 ${a.source} &nbsp;·&nbsp; ${new Date(a.publishedAt).toLocaleDateString('en-IN', { day:'numeric', month:'short' })}</span>
-        <a href="${a.url}" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;font-size:12px;font-weight:600;padding:6px 16px;border-radius:8px;text-decoration:none;" target="_blank">Read More →</a>
+      <div style="margin-bottom:10px;">
+        <span style="display:inline-block;background:${categoryColors[a.category] || '#6366f1'};color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:0.5px;text-transform:uppercase;">${escapeHtmlEmail(a.category || 'IT')}</span>${indiaBadge}
       </div>
-    </div>`).join('');
+      <h3 style="color:#f1f5f9;font-size:15px;font-weight:700;margin:0 0 8px 0;line-height:1.4;">${escapeHtmlEmail(a.title)}</h3>
+      ${formatDescriptionToBullets(a.description)}
+      <div style="background:rgba(99,102,241,0.1);border-left:3px solid #818cf8;border-radius:6px;padding:8px 12px;margin-bottom:12px;">
+        <span style="color:#a5b4fc;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.4px;">💡 Why This Matters:</span>
+        <span style="color:#e2e8f0;font-size:12px;line-height:1.5;display:block;margin-top:2px;">${escapeHtmlEmail(why)}</span>
+      </div>
+      <table width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+          <td style="color:#64748b;font-size:12px;">📰 ${escapeHtmlEmail(a.source || 'News Source')} &nbsp;·&nbsp; ${new Date(a.publishedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</td>
+          <td align="right"><a href="${escapeHtmlEmail(a.url)}" style="display:inline-block;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;font-size:12px;font-weight:600;padding:6px 16px;border-radius:8px;text-decoration:none;" target="_blank">Read More →</a></td>
+        </tr>
+      </table>
+    </div>`;
+      })
+      .join('');
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -139,24 +168,24 @@ const buildDigestEmailHtml = (user, digest, dateStr) => {
           <div style="font-size:28px;font-weight:900;color:#fff;letter-spacing:-1px;"><span style="color:#818cf8;">Nex</span>Brief</div>
           <div style="color:#c7d2fe;font-size:12px;margin-top:4px;letter-spacing:2px;text-transform:uppercase;">Daily Intelligence Digest</div>
           <div style="background:rgba(255,255,255,0.1);border-radius:8px;padding:10px 20px;display:inline-block;margin-top:16px;">
-            <span style="color:#e2e8f0;font-size:14px;">📅 ${dateStr} &nbsp;·&nbsp; Good Morning, ${user.name.split(' ')[0]}! ☀️</span>
+            <span style="color:#e2e8f0;font-size:14px;">📅 ${escapeHtmlEmail(dateStr)} &nbsp;·&nbsp; Good Morning, ${escapeHtmlEmail((user.name || 'Engineer').split(' ')[0])}! ☀️</span>
           </div>
         </td></tr>
         <tr><td style="background:#0f172a;padding:22px 32px 8px;">
-          <p style="color:#94a3b8;font-size:14px;line-height:1.7;margin:0;">Here's your personalized daily briefing — <strong style="color:#818cf8;">50% IT & Tech</strong>, <strong style="color:#f59e0b;">30% Education & Research</strong>, <strong style="color:#64748b;">20% World News</strong>. Curated for engineering students and IT professionals.</p>
+          <p style="color:#94a3b8;font-size:14px;line-height:1.7;margin:0;">Here's your personalized daily briefing — <strong style="color:#818cf8;">50% IT &amp; Jobs</strong>, <strong style="color:#f59e0b;">30% Education &amp; Research</strong>, <strong style="color:#64748b;">20% World News</strong>. Curated India-first for engineering students and IT professionals.</p>
         </td></tr>
         <tr><td style="background:#0f172a;padding:20px 32px 8px;">
           <div style="border-left:4px solid #6366f1;padding-left:14px;margin-bottom:18px;">
-            <h2 style="color:#f1f5f9;font-size:18px;font-weight:800;margin:0 0 3px 0;">🔴 IT & Technology <span style="font-size:13px;color:#64748b;font-weight:400;">(50%)</span></h2>
-            <p style="color:#64748b;font-size:12px;margin:0;">AI · Cybersecurity · Cloud · Software Development</p>
+            <h2 style="color:#f1f5f9;font-size:18px;font-weight:800;margin:0 0 3px 0;">🔴 IT, Tech Jobs &amp; AI <span style="font-size:13px;color:#64748b;font-weight:400;">(50%)</span></h2>
+            <p style="color:#64748b;font-size:12px;margin:0;">Hiring · Internships · AI · Cybersecurity · Cloud · Dev Tools</p>
           </div>
           ${renderCards(digest.itNews) || '<p style="color:#64748b;font-size:14px;">No IT news today.</p>'}
         </td></tr>
         <tr><td style="background:#0f172a;padding:16px 32px 8px;">
           <hr style="border:none;border-top:1px solid #1e293b;margin:0 0 20px 0;">
           <div style="border-left:4px solid #f59e0b;padding-left:14px;margin-bottom:18px;">
-            <h2 style="color:#f1f5f9;font-size:18px;font-weight:800;margin:0 0 3px 0;">📚 Education & Research <span style="font-size:13px;color:#64748b;font-weight:400;">(30%)</span></h2>
-            <p style="color:#64748b;font-size:12px;margin:0;">University · B.Tech · Science · EdTech · Research</p>
+            <h2 style="color:#f1f5f9;font-size:18px;font-weight:800;margin:0 0 3px 0;">📚 Education &amp; Research <span style="font-size:13px;color:#64748b;font-weight:400;">(30%)</span></h2>
+            <p style="color:#64748b;font-size:12px;margin:0;">GATE · Campus Placements · IIT/NIT · Science &amp; Space</p>
           </div>
           ${renderCards(digest.educationNews) || '<p style="color:#64748b;font-size:14px;">No education news today.</p>'}
         </td></tr>
@@ -164,12 +193,15 @@ const buildDigestEmailHtml = (user, digest, dateStr) => {
           <hr style="border:none;border-top:1px solid #1e293b;margin:0 0 20px 0;">
           <div style="border-left:4px solid #10b981;padding-left:14px;margin-bottom:18px;">
             <h2 style="color:#f1f5f9;font-size:18px;font-weight:800;margin:0 0 3px 0;">🌐 World Headlines <span style="font-size:13px;color:#64748b;font-weight:400;">(20%)</span></h2>
-            <p style="color:#64748b;font-size:12px;margin:0;">Business · Global Events · Other</p>
+            <p style="color:#64748b;font-size:12px;margin:0;">Startups · Economy · Global Tech Policy</p>
           </div>
           ${renderCards(digest.generalNews) || '<p style="color:#64748b;font-size:14px;">No world news today.</p>'}
         </td></tr>
         <tr><td style="background:#0f172a;border-radius:0 0 20px 20px;padding:28px 32px;text-align:center;border-top:1px solid #1e293b;">
-          <a href="${process.env.APP_URL || 'http://localhost:3000'}/dashboard" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#ffffff;font-size:14px;font-weight:700;padding:12px 28px;border-radius:10px;text-decoration:none;display:inline-block;margin-bottom:18px;letter-spacing:0.3px;">🖥️ Open Full Dashboard</a>
+          <div style="margin-bottom:18px;">
+            <a href="${appBase}/dashboard" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#ffffff;font-size:14px;font-weight:700;padding:12px 24px;border-radius:10px;text-decoration:none;display:inline-block;margin:4px;letter-spacing:0.3px;">🖥️ Open Full Dashboard</a>
+            <a href="${archiveUrl}" style="background:#1e293b;border:1px solid #334155;color:#e2e8f0;font-size:14px;font-weight:600;padding:11px 20px;border-radius:10px;text-decoration:none;display:inline-block;margin:4px;">🌐 View Web Edition</a>
+          </div>
           <p style="color:#64748b;font-size:12px;margin:0 0 16px 0;line-height:1.6;">
             You're subscribed to <strong style="color:#818cf8;">NexBrief Daily</strong> · Delivered every morning at <strong>7:00 AM IST</strong>
           </p>
@@ -185,6 +217,7 @@ const buildDigestEmailHtml = (user, digest, dateStr) => {
       </table>
     </td></tr>
   </table>
+  <img src="${trackingUrl}" width="1" height="1" alt="" style="display:block;width:1px;height:1px;border:0;opacity:0;" />
 </body></html>`;
 };
 
@@ -206,9 +239,9 @@ const buildRegistrationOTPHtml = (name, email, otp) => {
         </tr>
         <tr>
           <td style="background:#0f172a;border-radius:0 0 20px 20px;padding:32px;">
-            <p style="color:#f1f5f9;font-size:16px;font-weight:700;margin:0 0 6px 0;">Hi ${name.split(' ')[0]}, almost there! 👋</p>
+            <p style="color:#f1f5f9;font-size:16px;font-weight:700;margin:0 0 6px 0;">Hi ${escapeHtmlEmail(name.split(' ')[0])}, almost there! 👋</p>
             <p style="color:#94a3b8;font-size:14px;line-height:1.7;margin:0 0 8px 0;">
-              You're registering <strong style="color:#6ee7b7;">${email}</strong> on NexBrief.
+              You're registering <strong style="color:#6ee7b7;">${escapeHtmlEmail(email)}</strong> on NexBrief.
             </p>
             <p style="color:#94a3b8;font-size:14px;line-height:1.7;margin:0 0 24px 0;">
               Enter the 6-digit code below to verify your email and complete your registration. The code expires in <strong style="color:#f1f5f9;">10 minutes</strong>.
@@ -255,7 +288,7 @@ const buildOTPEmailHtml = (user, otp) => {
         </tr>
         <tr>
           <td style="background:#0f172a;border-radius:0 0 20px 20px;padding:32px;">
-            <p style="color:#f1f5f9;font-size:16px;font-weight:600;margin:0 0 8px 0;">Hi ${user.name.split(' ')[0]},</p>
+            <p style="color:#f1f5f9;font-size:16px;font-weight:600;margin:0 0 8px 0;">Hi ${escapeHtmlEmail(user.name.split(' ')[0])},</p>
             <p style="color:#94a3b8;font-size:14px;line-height:1.7;margin:0 0 24px 0;">We received a request to reset your NexBrief password. Use the code below — valid for <strong style="color:#f1f5f9;">10 minutes</strong>.</p>
             <div style="background:#1e293b;border:2px dashed #6366f1;border-radius:16px;padding:28px;text-align:center;margin-bottom:24px;">
               <div style="color:#94a3b8;font-size:13px;margin-bottom:10px;letter-spacing:1px;text-transform:uppercase;">Your Reset Code</div>
@@ -281,6 +314,7 @@ const buildOTPEmailHtml = (user, otp) => {
 
 // ─── Welcome Email ────────────────────────────────────────────────────────────
 const buildWelcomeEmailHtml = (user) => {
+  const appBase = (process.env.APP_URL || 'https://nexbrief-news.onrender.com').replace(/\/$/, '');
   return `<!DOCTYPE html>
 <html lang="en">
 <head><meta charset="UTF-8"><title>Welcome to NexBrief!</title></head>
@@ -297,15 +331,16 @@ const buildWelcomeEmailHtml = (user) => {
         </tr>
         <tr>
           <td style="background:#0f172a;border-radius:0 0 20px 20px;padding:32px;">
-            <h2 style="color:#f1f5f9;font-size:20px;font-weight:700;margin:0 0 12px 0;">Hello, ${user.name}! 👋</h2>
-            <p style="color:#94a3b8;font-size:14px;line-height:1.7;margin:0 0 20px 0;">You've successfully joined <strong style="color:#818cf8;">NexBrief</strong> — the first dedicated daily intelligence platform for <strong style="color:#f1f5f9;">IT professionals and engineering students</strong>. Every morning at <strong style="color:#fff;">7:00 AM IST</strong>, you'll receive:</p>
+            <h2 style="color:#f1f5f9;font-size:20px;font-weight:700;margin:0 0 12px 0;">Hello, ${escapeHtmlEmail(user.name)}! 👋</h2>
+            <p style="color:#94a3b8;font-size:14px;line-height:1.7;margin:0 0 20px 0;">You've successfully joined <strong style="color:#818cf8;">NexBrief</strong> — India's dedicated daily intelligence platform for <strong style="color:#f1f5f9;">IT professionals and engineering students</strong>. Every morning at <strong style="color:#fff;">7:00 AM IST</strong>, you'll receive:</p>
             <div style="background:#1e293b;border-radius:14px;padding:20px;margin-bottom:22px;">
-              <p style="color:#f1f5f9;font-size:14px;margin:0 0 10px 0;">🔴 <strong>50% IT & Technology</strong> — AI, Cybersecurity, Cloud, Software</p>
-              <p style="color:#f1f5f9;font-size:14px;margin:0 0 10px 0;">📚 <strong>30% Education & Research</strong> — University, B.Tech, Science, EdTech</p>
-              <p style="color:#f1f5f9;font-size:14px;margin:0;">🌐 <strong>20% World Headlines</strong> — Business, Global, Other</p>
+              <p style="color:#f1f5f9;font-size:14px;margin:0 0 10px 0;">🔴 <strong>50% IT, Jobs &amp; AI</strong> — Hiring, Internships, Frameworks, Cybersecurity</p>
+              <p style="color:#f1f5f9;font-size:14px;margin:0 0 10px 0;">📚 <strong>30% Education &amp; Research</strong> — GATE, Campus Placements, IIT/NIT, ISRO</p>
+              <p style="color:#f1f5f9;font-size:14px;margin:0 0 10px 0;">🌐 <strong>20% World Headlines</strong> — Startups, Economy &amp; Global Tech Policy</p>
+              <p style="color:#a5b4fc;font-size:13px;margin:0;">🤖 <strong>Plus:</strong> AI "Why This Matters" summary on every headline</p>
             </div>
             <div style="text-align:center;margin-bottom:22px;">
-              <a href="${process.env.APP_URL || 'http://localhost:3000'}/dashboard" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;font-size:15px;font-weight:700;padding:14px 36px;border-radius:12px;text-decoration:none;display:inline-block;">🚀 Go to Your Dashboard</a>
+              <a href="${appBase}/dashboard" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;font-size:15px;font-weight:700;padding:14px 36px;border-radius:12px;text-decoration:none;display:inline-block;">🚀 Go to Your Dashboard</a>
             </div>
             <div style="border-top:1px solid #1e293b;margin-top:20px;padding-top:16px;text-align:center;">
               <p style="color:#94a3b8;font-size:12px;margin:0 0 10px 0;line-height:1.6;">
@@ -323,7 +358,7 @@ const buildWelcomeEmailHtml = (user) => {
 </body></html>`;
 };
 
-// ─── Send Functions (using HTTP API via Port 443 HTTPS) ───────────────────────
+// ─── Send Functions ───────────────────────────────────────────────────────────
 const sendWelcomeEmail = async (user) => {
   await sendEmailViaAPI({
     toEmail: user.email,
@@ -357,8 +392,15 @@ const sendOTPEmail = async (user, otp) => {
 };
 
 const sendDailyDigest = async (digest, subscribers) => {
-  const dateStr = new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-  let successCount = 0, failCount = 0;
+  const dateStr = new Date().toLocaleDateString('en-IN', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    timeZone: 'Asia/Kolkata',
+  });
+  let successCount = 0;
+  let failCount = 0;
 
   for (const user of subscribers) {
     try {
@@ -366,15 +408,14 @@ const sendDailyDigest = async (digest, subscribers) => {
         toEmail: user.email,
         toName: user.name,
         subject: `📰 NexBrief Daily — ${dateStr}`,
-        htmlContent: buildDigestEmailHtml(user, digest, dateStr),
+        htmlContent: buildDigestEmailHtml(user, digest, dateStr, { isTest: false }),
       });
       successCount++;
     } catch (err) {
       console.error(`❌ Email failed to send via API → ${user.email}:`, err.message);
       failCount++;
     }
-    // Tiny delay to be nice to rate limits (HTTP is very fast)
-    await new Promise(r => setTimeout(r, 100));
+    await new Promise((r) => setTimeout(r, 100));
   }
 
   console.log(`📧 API Digest Send Report: ${successCount} sent, ${failCount} failed`);
@@ -382,12 +423,18 @@ const sendDailyDigest = async (digest, subscribers) => {
 };
 
 const sendTestEmail = async (toEmail, digest) => {
-  const dateStr = `[TEST] ${new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}`;
+  const dateStr = `[TEST] ${new Date().toLocaleDateString('en-IN', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    timeZone: 'Asia/Kolkata',
+  })}`;
   await sendEmailViaAPI({
-    toEmail: toEmail,
+    toEmail,
     toName: 'Admin',
     subject: `[TEST] NexBrief Daily`,
-    htmlContent: buildDigestEmailHtml({ name: 'Admin', email: toEmail }, digest, dateStr),
+    htmlContent: buildDigestEmailHtml({ name: 'Admin', email: toEmail }, digest, dateStr, { isTest: true }),
   });
   console.log(`✅ Test digest email sent via API → ${toEmail}`);
 };

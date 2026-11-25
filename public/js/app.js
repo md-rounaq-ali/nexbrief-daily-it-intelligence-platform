@@ -42,6 +42,11 @@ const escapeHtml = (str) => {
   div.textContent = str;
   return div.innerHTML;
 };
+const safeHttpUrl = (url) => {
+  if (!url || typeof url !== 'string') return '#';
+  const trimmed = url.trim();
+  return /^https?:\/\//i.test(trimmed) ? trimmed : '#';
+};
 
 // ── Auth Guard — redirect to dashboard if already logged in ──────────────────
 (async () => {
@@ -87,9 +92,19 @@ overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(
 $('#modal-close-btn').addEventListener('click', closeModal);
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
 
-// Open buttons
+// Open buttons & mobile nav
 ['#nav-register-btn', '#hero-register-btn', '#footer-register-btn'].forEach(s => $(s)?.addEventListener('click', () => openModal('register')));
-['#nav-login-btn', '#hero-login-btn', '#footer-login-btn'].forEach(s => $(s)?.addEventListener('click', () => openModal('login')));
+['#nav-login-btn', '#hero-login-btn', '#footer-login-btn', '#mobile-login-btn'].forEach(s => $(s)?.addEventListener('click', () => {
+  $('#mobile-nav-drawer')?.classList.add('hidden');
+  openModal('login');
+}));
+
+$('#mobile-nav-toggle')?.addEventListener('click', () => {
+  $('#mobile-nav-drawer')?.classList.toggle('hidden');
+});
+$$('#mobile-nav-drawer a').forEach((link) => {
+  link.addEventListener('click', () => $('#mobile-nav-drawer')?.classList.add('hidden'));
+});
 
 // Tab & nav links
 $('#tab-register')?.addEventListener('click', () => showForm('register'));
@@ -513,18 +528,27 @@ const renderPreviewCards = (articles) => {
   articles.forEach((art) => {
     const card = document.createElement('div');
     card.className = 'preview-card';
+    const artUrl = safeHttpUrl(art.url);
+    const imgUrl = safeHttpUrl(art.urlToImage);
+    const whyHtml = art.whyItMatters
+      ? `<div class="why-matters-box"><span class="why-matters-label">🤖 Why This Matters:</span> <span class="why-matters-text">${escapeHtml(art.whyItMatters)}</span></div>`
+      : '';
     card.innerHTML = `
-      ${art.urlToImage ? `<img src="${art.urlToImage}" alt="${escapeHtml(art.title)}" class="preview-card-img" loading="lazy" onerror="this.style.display='none'" />` : ''}
+      ${art.urlToImage && imgUrl !== '#' ? `<img src="${escapeHtml(imgUrl)}" alt="${escapeHtml(art.title)}" class="preview-card-img" loading="lazy" onerror="this.style.display='none'" />` : ''}
       <div class="preview-card-body">
         <div class="preview-card-top">
-          <span class="preview-card-cat">${art.category || 'IT'}</span>
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+            <span class="preview-card-cat">${escapeHtml(art.category || 'IT')}</span>
+            ${art.isIndia ? '<span class="preview-india-pill">🇮🇳 India</span>' : ''}
+          </div>
           <span class="preview-card-time">${timeAgoPreview(art.publishedAt)}</span>
         </div>
         <h4 class="preview-card-title">${escapeHtml(art.title)}</h4>
         <p class="preview-card-desc">${escapeHtml(art.description || 'Click below to read the full intelligence report.')}</p>
+        ${whyHtml}
         <div class="preview-card-footer">
           <span class="preview-card-source">📰 ${escapeHtml(art.source || 'NexBrief Intel')}</span>
-          <a href="${art.url}" target="_blank" rel="noopener noreferrer" class="preview-card-link">Read Full ↗</a>
+          <a href="${escapeHtml(artUrl)}" target="_blank" rel="noopener noreferrer" class="preview-card-link">Read Full ↗</a>
         </div>
       </div>
     `;
@@ -647,10 +671,15 @@ $$('.trend-pill').forEach(pill => {
 
 $('#preview-subscribe-btn')?.addEventListener('click', () => openModal('register'));
 
-// Handle URL query parameter ?q=... (Google Sitelinks Searchbox integration)
+// Handle URL query parameters: ?q=... (Google Sitelinks Searchbox) and ?auth=register|login
 document.addEventListener('DOMContentLoaded', () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const authMode = urlParams.get('auth');
+  if (authMode === 'register' || authMode === 'login') {
+    openModal(authMode);
+  }
+
   loadLiveHeadlinesPreview().then(() => {
-    const urlParams = new URLSearchParams(window.location.search);
     const query = urlParams.get('q') || urlParams.get('search');
     if (query && searchInput) {
       searchInput.value = query;

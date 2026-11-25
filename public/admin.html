@@ -7,10 +7,12 @@
   <meta name="robots" content="noindex, nofollow" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#6366f1" />
   <link rel="icon" type="image/png" href="/images/favicon.png" />
   <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
   <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
-  <link rel="apple-touch-icon" href="/images/favicon.png" />
+  <link rel="apple-touch-icon" href="/images/apple-touch-icon.png" />
   <link rel="stylesheet" href="/css/style.css" />
   <link rel="stylesheet" href="/css/admin.css" />
 </head>
@@ -101,6 +103,20 @@
             <div class="stat-card-label">Unsubscribed</div>
           </div>
         </div>
+        <div class="stat-card">
+          <div class="stat-card-icon" style="background:linear-gradient(135deg,#06b6d4,#0284c7);">📈</div>
+          <div class="stat-card-body">
+            <div class="stat-card-value" id="stat-open-rate">—</div>
+            <div class="stat-card-label">Avg Open Rate</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9);">🔔</div>
+          <div class="stat-card-body">
+            <div class="stat-card-value" id="stat-push-subs">—</div>
+            <div class="stat-card-label">Push Subscribers</div>
+          </div>
+        </div>
       </div>
 
       <!-- Today Status -->
@@ -122,11 +138,13 @@
                 <th>Date</th>
                 <th>Status</th>
                 <th>Recipients</th>
-                <th>Source</th>
+                <th>Open Rate</th>
+                <th>Push Sent</th>
+                <th>Sent At</th>
               </tr>
             </thead>
             <tbody id="recent-digests-body">
-              <tr><td colspan="4" style="text-align:center;color:var(--color-text-muted);padding:24px;">Loading...</td></tr>
+              <tr><td colspan="6" style="text-align:center;color:var(--color-text-muted);padding:24px;">Loading...</td></tr>
             </tbody>
           </table>
         </div>
@@ -178,12 +196,14 @@
               <th>Date</th>
               <th>Status</th>
               <th>Recipients</th>
+              <th>Open Rate</th>
+              <th>Push Sent</th>
               <th>Trigger</th>
               <th>Sent At</th>
             </tr>
           </thead>
           <tbody id="digests-body">
-            <tr><td colspan="5" style="text-align:center;color:var(--color-text-muted);padding:24px;">Loading...</td></tr>
+            <tr><td colspan="7" style="text-align:center;color:var(--color-text-muted);padding:24px;">Loading...</td></tr>
           </tbody>
         </table>
       </div>
@@ -219,6 +239,15 @@
           <button class="btn btn-ghost" id="send-test-btn">📧 Send Test Email</button>
           <div class="send-result" id="test-result"></div>
         </div>
+
+        <!-- Test Web Push Notification -->
+        <div class="send-card">
+          <div class="send-card-icon">🔔</div>
+          <h3>Send Test Push Alert</h3>
+          <p>Broadcast a test browser notification to all devices subscribed to 7:00 AM IST Web Push alerts.</p>
+          <button class="btn btn-ghost" id="send-test-push-btn">📲 Send Test Push Notification</button>
+          <div class="send-result" id="test-push-result"></div>
+        </div>
       </div>
     </div>
 
@@ -227,6 +256,7 @@
   <!-- Toast -->
   <div class="toast" id="toast" role="alert"></div>
 
+  <script src="/js/pwa.js"></script>
   <script src="/js/admin.js"></script>
 </body>
 </html>

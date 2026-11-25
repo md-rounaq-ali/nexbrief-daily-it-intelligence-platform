@@ -114,12 +114,18 @@
       {
         "@type": "ListItem",
         "position": 3,
+        "name": "Digest Archive",
+        "item": "https://nexbrief-news.onrender.com/archive"
+      },
+      {
+        "@type": "ListItem",
+        "position": 4,
         "name": "IT Sector Coverage",
         "item": "https://nexbrief-news.onrender.com/#features"
       },
       {
         "@type": "ListItem",
-        "position": 4,
+        "position": 5,
         "name": "Creator Md Rounaq Ali",
         "item": "https://nexbrief-news.onrender.com/#about"
       }
@@ -266,10 +272,12 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
     rel="stylesheet" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#6366f1" />
   <link rel="icon" type="image/png" href="/images/favicon.png" />
   <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
   <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
-  <link rel="apple-touch-icon" href="/images/favicon.png" />
+  <link rel="apple-touch-icon" href="/images/apple-touch-icon.png" />
   <link rel="stylesheet" href="/css/style.css" />
 </head>
 
@@ -281,15 +289,31 @@
       <a href="/" class="nav-logo" style="display:flex;align-items:center;gap:10px;"><img src="/images/logo.svg" alt="NexBrief Logo" style="height:32px;width:32px;border-radius:6px;object-fit:cover;" /><span><span class="logo-nex">Nex</span>Brief</span></a>
       <ul class="nav-links">
         <li><a href="#search-section">Search News</a></li>
+        <li><a href="/archive">Archive</a></li>
         <li><a href="#topics">Daily News</a></li>
         <li><a href="#features">Why NexBrief</a></li>
-        <li><a href="#share">Share</a></li>
         <li><a href="#faq">FAQ</a></li>
-        <li><a href="#about">About Creator</a></li>
+        <li><a href="#about">Creator</a></li>
       </ul>
       <div class="nav-actions">
+        <button type="button" class="btn btn-ghost btn-sm pwa-install-btn hidden" id="pwa-install-btn" title="Install NexBrief App">📲 Install</button>
+        <button type="button" class="btn btn-ghost btn-sm push-optin-btn" id="hero-push-btn" title="Enable 7 AM IST browser notifications">🔔 7 AM Alerts</button>
         <button class="btn btn-ghost" id="nav-login-btn">Sign In</button>
         <button class="btn btn-primary" id="nav-register-btn">Get Started Free</button>
+        <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Open menu">☰</button>
+      </div>
+    </div>
+    <div class="mobile-nav-drawer hidden" id="mobile-nav-drawer">
+      <a href="#search-section">🔍 Search News</a>
+      <a href="/archive">🗞️ Public Archive</a>
+      <a href="#topics">📊 Daily Topics</a>
+      <a href="#features">✨ Why NexBrief</a>
+      <a href="#faq">❓ FAQ</a>
+      <a href="#about">👨‍💻 About Creator</a>
+      <div class="mobile-nav-drawer-actions">
+        <button type="button" class="btn btn-ghost btn-sm push-optin-btn">🔔 7 AM Alerts</button>
+        <button type="button" class="btn btn-ghost btn-sm pwa-install-btn hidden">📲 Install App</button>
+        <button type="button" class="btn btn-ghost btn-sm" id="mobile-login-btn">Sign In</button>
       </div>
     </div>
   </nav>
@@ -311,10 +335,15 @@
         <span class="gradient-text">Curated for India's Engineers</span>
       </h1>
       <p class="hero-subtitle">
-        NexBrief by <strong>Md Rounaq Ali</strong> is India's premier daily IT news &amp; tech sector briefing — <strong>50% IT &amp; AI News</strong>,
-        <strong>30% Education &amp; Tech Jobs</strong>, <strong>20% World Headlines</strong>. Delivered free at <strong>7:00 AM
-          IST</strong>, every single morning.
+        NexBrief by <strong>Md Rounaq Ali</strong> is India's premier daily IT news &amp; tech sector briefing — <strong>50% IT &amp; Jobs</strong>,
+        <strong>30% Education &amp; Research</strong>, <strong>20% World Headlines</strong> — enhanced with <strong>AI "Why This Matters"</strong> insights every morning at <strong>7:00 AM IST</strong>.
       </p>
+      <div class="hero-countdown-bar" aria-live="polite">
+        <span class="countdown-pulse-dot"></span>
+        <span>Next digest in:</span>
+        <strong class="hero-countdown-clock" id="hero-countdown" data-countdown>--:--:--</strong>
+        <span class="countdown-subtag">· 7:00 AM IST Daily</span>
+      </div>
       <div class="hero-cta">
         <button class="btn btn-primary btn-lg" id="hero-register-btn">
           📧 Subscribe Free — Get Tomorrow's Digest
@@ -322,6 +351,9 @@
         <button class="btn btn-ghost btn-lg" id="hero-login-btn">
           Sign In to Dashboard →
         </button>
+        <a href="/archive" class="btn btn-ghost btn-lg">
+          🗞️ Browse Past Digests
+        </a>
       </div>
       <div class="hero-stats">
         <div class="stat-item">
@@ -432,9 +464,14 @@
           <p>Login anytime to browse the full digest, read articles in detail, and view your history.</p>
         </div>
         <div class="feature-card">
-          <div class="feature-icon" style="background:linear-gradient(135deg,#06b6d4,#0891b2);">✨</div>
-          <h3>Completely Free</h3>
-          <p>No subscription fees, no ads, no credit card. NexBrief is built by engineers, for engineers.</p>
+          <div class="feature-icon" style="background:linear-gradient(135deg,#06b6d4,#0891b2);">🤖</div>
+          <h3>AI "Why This Matters"</h3>
+          <p>Every headline includes a 1-line actionable AI takeaway explaining why it matters for your interviews, internships, and skills.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9);">📲</div>
+          <h3>PWA App &amp; 7 AM Push Alerts</h3>
+          <p>Install NexBrief right to your phone home screen and get instant browser alerts every morning at 7 AM IST — 100% free.</p>
         </div>
       </div>
     </div>
@@ -868,6 +905,7 @@
           <p>50% IT · 30% Education · 20% World. Daily at 7 AM IST. Built for B.Tech students & IT professionals.</p>
         </div>
         <div class="footer-links">
+          <a href="/archive">Public Archive</a>
           <a href="#topics">Daily News</a>
           <a href="#features">Features</a>
           <a href="#faq">FAQ</a>
@@ -888,6 +926,7 @@
     </div>
   </footer>
 
+  <script src="/js/pwa.js"></script>
   <script src="/js/app.js"></script>
 </body>
 

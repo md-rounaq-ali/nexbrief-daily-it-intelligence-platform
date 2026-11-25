@@ -1,6 +1,9 @@
 User-agent: *
 Allow: /
+Allow: /archive
+Allow: /archive/
 Allow: /images/
+Allow: /manifest.json
 Disallow: /dashboard
 Disallow: /admin
 Disallow: /api/

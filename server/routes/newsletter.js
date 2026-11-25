@@ -5,17 +5,16 @@ const { adminOnly } = require('../middleware/admin');
 const { runDailyDigest } = require('../jobs/dailyDigest');
 const { sendTestEmail } = require('../services/emailService');
 const Digest = require('../models/Digest');
+const { getTodayIST } = require('../utils/dateIST');
 
 // @route   POST /api/newsletter/trigger
 // @desc    Manually trigger today's digest (Admin or cron-job.org ping)
 // @access  Admin OR via secret key
 router.post('/trigger', async (req, res) => {
   try {
-    // Allow trigger via secret key (for cron-job.org) or admin JWT
     const { secretKey } = req.body;
     const isValidSecret = secretKey && secretKey === process.env.JWT_SECRET;
 
-    // Also accept admin JWT
     let isAdmin = false;
     const authHeader = req.headers.authorization;
     if (authHeader) {
@@ -35,13 +34,12 @@ router.post('/trigger', async (req, res) => {
 
     const result = await runDailyDigest('manual');
 
-    // Return only a lightweight summary — NOT the full digest articles
-    // (cron-job.org fails with "output too large" if full article data is returned)
     res.json({
       success: true,
       status: result.skipped ? 'skipped' : (result.success ? 'sent' : 'failed'),
       sentTo: result.sentTo || 0,
       failed: result.failed || 0,
+      pushSent: result.pushSent || 0,
       reason: result.reason || null,
       timestamp: new Date().toISOString(),
     });
@@ -56,13 +54,13 @@ router.post('/trigger', async (req, res) => {
 router.post('/test-email', protect, adminOnly, async (req, res) => {
   try {
     const { toEmail } = req.body;
-    const today = new Date().toISOString().split('T')[0];
+    const today = getTodayIST();
 
     let digest = await Digest.findOne({ date: today });
     if (!digest || !digest.itNews || digest.itNews.length === 0) {
       const { fetchAllNewsForDigest } = require('../services/newsService');
       const { itNews, educationNews, generalNews } = await fetchAllNewsForDigest();
-      digest = { itNews, educationNews, generalNews };
+      digest = { date: today, itNews, educationNews, generalNews };
     }
 
     await sendTestEmail(toEmail || req.user.email, digest);

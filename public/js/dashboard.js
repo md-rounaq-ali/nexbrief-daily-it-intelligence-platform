@@ -13,6 +13,13 @@ const showToast = (msg, type = 'info', dur = 4000) => {
   t.className = `toast ${type} show`;
   setTimeout(() => t.classList.remove('show'), dur);
 };
+const escapeHtml = (str = '') => String(str).replace(/[&<>"']/g, (c) =>
+  ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const safeHttpUrl = (url) => {
+  if (!url || typeof url !== 'string') return '#';
+  const trimmed = url.trim();
+  return /^https?:\/\//i.test(trimmed) ? trimmed : '#';
+};
 
 // ── Auth Guard — REDIRECT IF NOT LOGGED IN ────────────────────────────────────
 if (!token) { window.location.replace('/'); }
@@ -64,15 +71,30 @@ const setupUserUI = (user) => {
 
 // ── Category Config ───────────────────────────────────────────────────────────
 const CATEGORY_CLASS = {
-  'AI': 'cat-ai', 'Cybersecurity': 'cat-cybersecurity', 'Software': 'cat-software',
+  'Jobs': 'cat-jobs', 'AI': 'cat-ai', 'Cybersecurity': 'cat-cybersecurity', 'Software': 'cat-software',
   'Cloud': 'cat-cloud', 'IT': 'cat-it', 'Education': 'cat-edu',
   'Research': 'cat-research', 'Science': 'cat-science',
   'General': 'cat-general', 'Technology': 'cat-technology',
 };
 const CATEGORY_EMOJI = {
-  'AI': '🤖', 'Cybersecurity': '🔒', 'Software': '💻', 'Cloud': '☁️',
+  'Jobs': '💼', 'AI': '🤖', 'Cybersecurity': '🔒', 'Software': '💻', 'Cloud': '☁️',
   'IT': '🖥️', 'Education': '📚', 'Research': '🔬', 'Science': '⚗️',
   'General': '🌐', 'Technology': '⚡',
+};
+
+const buildShareUrls = (article) => {
+  const url = safeHttpUrl(article.url);
+  const title = article.title || 'NexBrief Update';
+  const why = article.whyItMatters ? `\n💡 Why it matters: ${article.whyItMatters}` : '';
+  const waText = encodeURIComponent(`📰 ${title}${why}\nRead via NexBrief: ${url}`);
+  const liUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+  const xUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(`${title} — via @NexBrief`)}&url=${encodeURIComponent(url)}`;
+  return {
+    rawUrl: url,
+    waUrl: `https://api.whatsapp.com/send?text=${waText}`,
+    liUrl,
+    xUrl,
+  };
 };
 
 // ── Render News Card ──────────────────────────────────────────────────────────
@@ -93,24 +115,54 @@ const renderNewsCard = (article, index) => {
   const cat = article.category || 'General';
   const emoji = CATEGORY_EMOJI[cat] || '📰';
   const catClass = CATEGORY_CLASS[cat] || 'cat-general';
+  const safeImg = safeHttpUrl(article.urlToImage);
+  const share = buildShareUrls(article);
 
-  const imgHtml = article.urlToImage
-    ? `<img class="card-image" src="${article.urlToImage}" alt="" loading="lazy" onerror="this.outerHTML='<div class=card-image-placeholder>${emoji}</div>'">`
+  const imgHtml = article.urlToImage && safeImg !== '#'
+    ? `<img class="card-image" src="${escapeHtml(safeImg)}" alt="" loading="lazy" onerror="this.outerHTML='<div class=card-image-placeholder>${emoji}</div>'">`
     : `<div class="card-image-placeholder">${emoji}</div>`;
+
+  const whyHtml = article.whyItMatters
+    ? `<div class="why-matters-box"><span class="why-matters-label">🤖 Why This Matters:</span><span class="why-matters-text">${escapeHtml(article.whyItMatters)}</span></div>`
+    : '';
 
   card.innerHTML = `
     ${imgHtml}
     <div class="card-top">
-      <span class="card-category ${catClass}">${cat}</span>
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+        <span class="card-category ${escapeHtml(catClass)}">${escapeHtml(cat)}</span>
+        ${article.isIndia ? '<span class="card-india-pill">🇮🇳 India</span>' : ''}
+      </div>
       <span class="card-time">${timeAgo(article.publishedAt)}</span>
     </div>
-    <div class="card-title">${article.title || 'Untitled'}</div>
-    <div class="card-desc">${article.description || 'Read the full article for more details.'}</div>
+    <div class="card-title">${escapeHtml(article.title || 'Untitled')}</div>
+    <div class="card-desc">${escapeHtml(article.description || 'Read the full article for more details.')}</div>
+    ${whyHtml}
+    <div class="card-share-bar">
+      <a href="${escapeHtml(share.waUrl)}" target="_blank" rel="noopener noreferrer" class="mini-share-btn share-wa" title="Share on WhatsApp">WhatsApp</a>
+      <a href="${escapeHtml(share.liUrl)}" target="_blank" rel="noopener noreferrer" class="mini-share-btn share-li" title="Share on LinkedIn">LinkedIn</a>
+      <a href="${escapeHtml(share.xUrl)}" target="_blank" rel="noopener noreferrer" class="mini-share-btn share-x" title="Post on X">X</a>
+      <button type="button" class="mini-share-btn share-copy dash-copy-btn" title="Copy article link">📋 Copy</button>
+    </div>
     <div class="card-footer">
-      <span class="card-source">${article.source || 'News'}</span>
+      <span class="card-source">${escapeHtml(article.source || 'News')}</span>
       <button class="card-read-btn">Read Full →</button>
     </div>
   `;
+
+  // Prevent share buttons from triggering modal open
+  card.querySelectorAll('.card-share-bar a, .card-share-bar button').forEach((el) => {
+    el.addEventListener('click', (e) => e.stopPropagation());
+  });
+  card.querySelector('.dash-copy-btn')?.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(share.rawUrl);
+      showToast('🔗 Article link copied!', 'success', 2200);
+    } catch {
+      showToast('Could not copy link.', 'error', 2200);
+    }
+  });
+
   card.addEventListener('click', () => openArticleModal(article));
   return card;
 };
@@ -121,21 +173,33 @@ const openArticleModal = (article) => {
   const content = $('#article-modal-content');
   const cat = article.category || 'General';
   const catClass = CATEGORY_CLASS[cat] || 'cat-general';
+  const safeImg = safeHttpUrl(article.urlToImage);
+  const safeUrl = safeHttpUrl(article.url);
+  const share = buildShareUrls(article);
 
   content.innerHTML = `
-    ${article.urlToImage ? `<img class="article-modal-img" src="${article.urlToImage}" alt="" onerror="this.style.display='none'">` : ''}
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
-      <span class="card-category ${catClass}" style="font-size:12px;">${cat}</span>
+    ${article.urlToImage && safeImg !== '#' ? `<img class="article-modal-img" src="${escapeHtml(safeImg)}" alt="" onerror="this.style.display='none'">` : ''}
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+      <span class="card-category ${escapeHtml(catClass)}" style="font-size:12px;">${escapeHtml(cat)}</span>
+      ${article.isIndia ? '<span class="card-india-pill">🇮🇳 India</span>' : ''}
     </div>
-    <h2 class="article-modal-title">${article.title}</h2>
+    <h2 class="article-modal-title">${escapeHtml(article.title)}</h2>
     <div class="article-modal-meta">
-      <span>📰 ${article.source || 'Unknown'}</span>
+      <span>📰 ${escapeHtml(article.source || 'Unknown')}</span>
       <span>🕒 ${article.publishedAt ? new Date(article.publishedAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) : 'Recent'}</span>
     </div>
-    <p class="article-modal-desc">${article.description || 'No description available.'}</p>
+    ${article.whyItMatters ? `<div class="why-matters-box" style="margin-bottom:18px;font-size:13px;"><span class="why-matters-label">🤖 Why This Matters:</span><span class="why-matters-text">${escapeHtml(article.whyItMatters)}</span></div>` : ''}
+    <p class="article-modal-desc">${escapeHtml(article.description || 'No description available.')}</p>
+    <div class="article-share-row" style="margin-bottom:20px;">
+      <span style="font-size:12px;color:var(--color-text-muted);margin-right:4px;">Share:</span>
+      <a href="${escapeHtml(share.waUrl)}" target="_blank" rel="noopener noreferrer" class="mini-share-btn share-wa">💬 WhatsApp</a>
+      <a href="${escapeHtml(share.liUrl)}" target="_blank" rel="noopener noreferrer" class="mini-share-btn share-li">💼 LinkedIn</a>
+      <a href="${escapeHtml(share.xUrl)}" target="_blank" rel="noopener noreferrer" class="mini-share-btn share-x">🐦 X</a>
+      <button type="button" class="mini-share-btn share-copy" id="modal-copy-link-btn">📋 Copy Link</button>
+    </div>
     <div class="article-modal-actions">
-      <a href="${article.url}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
-        🔗 Read Full Article on ${article.source || 'Source'}
+      <a href="${escapeHtml(safeUrl)}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+        🔗 Read Full Article on ${escapeHtml(article.source || 'Source')}
       </a>
       <button class="btn btn-ghost" id="close-article-btn">Close</button>
     </div>
@@ -144,6 +208,12 @@ const openArticleModal = (article) => {
   overlay.classList.add('active');
   document.body.style.overflow = 'hidden';
   $('#close-article-btn')?.addEventListener('click', closeArticleModal);
+  $('#modal-copy-link-btn')?.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(share.rawUrl);
+      showToast('🔗 Article link copied!', 'success', 2200);
+    } catch {}
+  });
 };
 
 const closeArticleModal = () => {
@@ -368,9 +438,19 @@ $('#subscribe-toggle-btn')?.addEventListener('click', async () => {
   } catch { showToast('Could not update subscription.', 'error'); }
 });
 
-// ── Refresh ───────────────────────────────────────────────────────────────────
+// ── Refresh & Today's Digest Nav ──────────────────────────────────────────────
+$('#nav-today-link')?.addEventListener('click', () => {
+  closeArticleModal();
+  $('#page-date').textContent = new Date().toLocaleDateString('en-IN', {
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+  });
+  loadTodaysNews();
+});
 $('#refresh-btn')?.addEventListener('click', () => {
   showToast('🔄 Fetching latest news...', 'info', 2000);
+  $('#page-date').textContent = new Date().toLocaleDateString('en-IN', {
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+  });
   loadTodaysNews();
 });
 $('#retry-btn')?.addEventListener('click', loadTodaysNews);

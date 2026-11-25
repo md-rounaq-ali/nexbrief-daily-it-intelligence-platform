@@ -1,152 +1,183 @@
-# NexBrief — Daily IT & Tech Intelligence Platform
+<div align="center">
+  <img src="public/images/devto_cover.png" alt="NexBrief Daily IT & Tech Intelligence Platform" width="100%" style="max-width:860px;border-radius:14px;" />
+  <br /><br />
+  <img src="public/images/logo.svg" alt="NexBrief Logo" width="76" height="76" />
+  <h1>NexBrief — Daily IT &amp; Tech Intelligence Platform</h1>
+  <p>
+    <strong>India's first dedicated daily IT intelligence newsletter — 50% IT, Jobs &amp; AI, 30% Education &amp; Research, 20% World News.<br />
+    Enriched with AI <em>"Why This Matters"</em> summaries &amp; delivered every morning at 7:00 AM IST.</strong>
+  </p>
 
-<p align="center">
-  <img src="public/images/logo.svg" alt="NexBrief Logo" width="120" height="120" />
-</p>
+  <p>
+    <a href="https://nexbrief-news.onrender.com" target="_blank">
+      <img src="https://img.shields.io/badge/Live%20Platform-Online-10b981?style=for-the-badge&logo=render&logoColor=white" alt="Live Demo" />
+    </a>
+    <a href="https://nexbrief-news.onrender.com/archive" target="_blank">
+      <img src="https://img.shields.io/badge/Public%20Archive-SEO%20Indexed-6366f1?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Public Archive" />
+    </a>
+    <img src="https://img.shields.io/badge/Node.js-18%2B-339933?style=for-the-badge&logo=nodedotjs&logoColor=white" alt="Node.js" />
+    <img src="https://img.shields.io/badge/MongoDB-Atlas-47A248?style=for-the-badge&logo=mongodb&logoColor=white" alt="MongoDB Atlas" />
+    <img src="https://img.shields.io/badge/PWA-Installable-38bdf8?style=for-the-badge&logo=pwa&logoColor=white" alt="PWA Ready" />
+  </p>
 
-<h3 align="center">NexBrief</h3>
-<p align="center">
-  <strong>India's first dedicated IT newsletter platform — 50% IT & AI, 30% Education & Research, 20% World News. Delivered at 7 AM IST, every single morning.</strong>
-</p>
-
-<p align="center">
-  📖 <strong>Read the full technical architecture and design write-up on <a href="https://dev.to/mdrounaqali/how-i-built-nexbrief-an-automated-daily-it-newsletter-platform-for-engineering-students-3b57" target="_blank">Dev.to</a>!</strong>
-</p>
-
-<p align="center">
-  <a href="https://nexbrief-news.onrender.com" target="_blank">
-    <img src="https://img.shields.io/badge/Live%20Demo-Online-brightgreen?style=for-the-badge&logo=render&logoColor=white" alt="Live Demo" />
-  </a>
-  <img src="https://img.shields.io/badge/Node.js-v18+-blue?style=for-the-badge&logo=nodedotjs&logoColor=white" alt="Node version" />
-  <img src="https://img.shields.io/badge/MongoDB-Atlas-47A248?style=for-the-badge&logo=mongodb&logoColor=white" alt="MongoDB" />
-  <img src="https://img.shields.io/badge/Email%20Engine-Brevo%20API-orange?style=for-the-badge&logo=mailchimp&logoColor=white" alt="Brevo API" />
-</p>
-
----
-
-## 🌐 Live Application URL
- **Visit the Live Site:** **[https://nexbrief-news.onrender.com](https://nexbrief-news.onrender.com)**
-
----
-
-**NexBrief** is a premium, fully automated daily newsletter and intelligence platform built specifically for B.Tech/MCA students, developers, and IT professionals. Recognizing that keeping up with the rapid pace of the IT sector is crucial yet time-consuming, NexBrief cuts through the digital noise. By subscribing, users receive a highly structured, 2-to-5-minute daily digest directly in their inbox at **7:00 AM IST** every morning.
+  <p>
+    📖 <a href="https://dev.to/mdrounaqali/how-i-built-nexbrief-an-automated-daily-it-newsletter-platform-for-engineering-students-3b57" target="_blank"><strong>Read the Architecture Deep Dive on Dev.to</strong></a>
+    &nbsp;·&nbsp;
+    🌐 <a href="https://nexbrief-news.onrender.com" target="_blank"><strong>nexbrief-news.onrender.com</strong></a>
+    &nbsp;·&nbsp;
+    👨‍💻 <a href="https://md-rounaq-ali.netlify.app/" target="_blank"><strong>Md Rounaq Ali Portfolio</strong></a>
+  </p>
+</div>
 
 ---
 
-## 🌟 Key Features
+## 🎯 Why NexBrief?
 
-*   📰 **India-First Balanced News Curation**: Integrates live news API feeds and filters them using a strict, built-in ratio of **60% India-centric** tech and education news and **40% Global** tech updates.
-*   📊 **Dynamic Category Constraints**: Curation size automatically scales depending on real-time news availability, maintaining a strict balance of:
-    *   **IT & AI:** 10–20 articles
-    *   **Education & Research:** 6–12 articles
-    *   **World Headlines:** 4–8 articles
-*   📧 **Bypass SMTP Blocks (HTTPS Email Engine)**: Utilizes Brevo's Transactional HTTP API over secure **Port 443** (instead of standard SMTP ports like `587` or `465`), successfully bypassing ISP and cloud hosting port restrictions (like Render's default block) for 100% email deliverability.
-*   🖼️ **Intelligent Fallback Image System**: Implements a category-based mapper. If a publisher's article lacks a cover image, the system dynamically binds a high-resolution, topic-relevant Unsplash stock photo, preventing empty gray placeholder blocks.
-*   📝 **Skimmable Content**: Automatically parses long descriptions into clean, bullet-pointed lists in the email body for fast scanning.
-*   🔐 **Secure Authentication**: Built with JWT session tokens and password hashing (`bcryptjs`).
-*   ⚙️ **Advanced Admin Console**:
-    *   Manage and monitor active subscriber lists.
-    *   Promote or demote user administrator privileges.
-    *   Permanently delete users to allow direct re-registration.
-    *   Manually trigger global daily digests and send test mockups.
-*   🎨 **Premium UI/UX**: Designed with a sleek dark-mode glassmorphic theme, responsive grids, and clean hover state micro-animations.
-*   🔍 **Search Engine Optimized**: Out-of-the-box configuration with verified sitemaps and indexing policies (`robots.txt`, `sitemap.xml`) for Google Search Console index ranking.
+Engineering students, freshers, and software developers in India lose 30–45 minutes every day sifting through noisy social feeds, generic portals, and irrelevant entertainment clicks just to track hiring drives, AI releases, and exam alerts.
+
+**NexBrief** automates the entire signal-to-noise pipeline and delivers a structured, 2-to-5-minute morning briefing across **Email, Interactive Dashboard, Web Push Notifications, and an Installable PWA App** at **7:00 AM IST**.
 
 ---
 
-## 🛠️ Architecture & Tech Stack
+## ✨ Platform Capabilities
 
-| Layer | Component | Notes |
+### 📰 Student-Focused, India-First News Engine
+- **60% India / 40% Global Ratio:** Every section prioritizes Indian IT hubs, campuses, startups, and hiring drives while preserving high-signal global engineering updates.
+- **Strict Relevance Filtering:** Automatically strips out off-topic noise (gaming leaks, entertainment, celebrity, sports tabloid stories).
+- **Dynamic Section Balancing:**
+  - 🔴 **50% IT, Jobs & AI (10–20 stories):** Ranked Jobs & Hiring (TCS, Infosys, Wipro, HCL, GCCs, Internships) → AI & LLMs → Frameworks & Dev Tools → Cybersecurity → Cloud.
+  - 📚 **30% Education & Research (6–12 stories):** GATE, AICTE, UGC, IIT/NIT/BITS placements, hackathons, scholarships, ISRO & NASA R&D.
+  - 🌐 **20% World Headlines (4–8 stories):** Startup funding, Digital India fintech, tech regulation & global markets.
+- **3-Day Deduplication:** Cross-checks past sent digests so subscribers never receive repeat headlines.
+
+### 🤖 AI "Why This Matters" Insights
+- Uses **Google Gemini (`gemini-2.5-flash` batched JSON generation)** with an automatic **domain-aware intelligence fallback** to attach a 1-line actionable takeaway to every article (e.g., hiring eligibility impact, interview talking points, or developer stack relevance).
+
+### 🗞️ SEO-Indexed Public Digest Archive (`/archive`)
+- Server-rendered public pages at `/archive` and `/archive/YYYY-MM-DD` with full Open Graph tags, `NewsArticle` / `CollectionPage` JSON-LD structured data, dynamic XML sitemap generation (`/sitemap.xml`), and prev/next edition navigation.
+
+### ⏰ Live 7:00 AM IST Countdown Timer
+- Timezone-independent client countdown (`HH:MM:SS`) to the next **7:00 AM IST** edition visible across the Homepage, Dashboard, and Public Archive.
+
+### 🔗 One-Click Social & Peer Sharing
+- Direct WhatsApp, LinkedIn, X (Twitter), and Copy-Link sharing controls embedded on every article card, reader modal, and archive story.
+
+### 🔔 Browser Web Push Notifications (7 AM IST)
+- Powered by **VAPID Web Push (`web-push`)** with a persistent MongoDB VAPID key store fallback — alerts opted-in students every morning even when the browser tab is closed, plus an Admin Test Push control.
+
+### 📱 Installable Progressive Web App (PWA)
+- Complete with [`manifest.json`](public/manifest.json), true 192×192 & 512×512 app icons, Service Worker (`public/sw.js`) shell caching, and native install prompt support on Android, iOS, and Desktop browsers.
+
+### 📧 Email Open Tracking & Admin Analytics
+- Port-443 HTTPS delivery via **Brevo Transactional API** (bypassing cloud SMTP port blocks).
+- Clean 1×1 transparent tracking pixel (`/api/track/open`) recording unique opens & open rates per edition inside the **Admin Analytics Dashboard**.
+- Dual-OTP email verification (signup & password reset) + automated Brevo blocklist unblocking on re-subscribe.
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Technology | Purpose |
 | :--- | :--- | :--- |
-| **Frontend** | HTML5, Vanilla CSS, Core JavaScript | Modern, dependency-free responsive layout |
-| **Backend** | Node.js + Express.js | Robust REST API endpoints |
-| **Database** | MongoDB Atlas + Mongoose | Schema validation for users, digests, and verification queues |
-| **Email Delivery** | Brevo Transactional HTTPS API | Port 443 delivery for maximum ISP compatibility |
-| **Scheduling** | cron-job.org | Automated triggers for morning digests |
+| **Backend** | Node.js (v18+), Express.js | REST API, SSR SEO archive, tracking, push & cron |
+| **Database** | MongoDB Atlas + Mongoose 8 | Users, Pending OTPs, Digests, Push Subscriptions, Config |
+| **AI Enrichment** | Google Gemini API + Smart Fallback | Batched 1-line *"Why This Matters"* takeaways |
+| **Email Engine** | Brevo Transactional HTTPS API | High-deliverability Port 443 HTML emails + Open Pixel |
+| **Push Alerts** | `web-push` (VAPID) + Service Worker | Morning digest browser push notifications |
+| **Frontend & PWA** | Vanilla HTML5, CSS3, ES6 JS, PWA | Responsive dark glassmorphism, search, installable app |
+| **Scheduling** | `node-cron` + `cron-job.org` | Reliable daily 7:00 AM IST execution & warm keep-alive |
 
 ---
 
-## 📁 Directory Layout
+## 📁 Project Structure
 
 ```text
 nexbrief/
 ├── server/
-│   ├── index.js              # Express Application Entry Point
-│   ├── config/db.js          # MongoDB Database Connection Handler
-│   ├── models/               # Mongoose Schemas (User, Digest, PendingUser)
-│   ├── routes/               # REST API Routes (Auth, Admin, News, Newsletter)
-│   ├── services/             # Core Logic (newsService, emailService)
-│   └── middleware/           # Authorization Guards (JWT Protect, Admin Guard)
+│   ├── index.js                   # Express server, dynamic /sitemap.xml, SPA & archive routes
+│   ├── config/db.js               # MongoDB connection setup
+│   ├── jobs/dailyDigest.js        # 7 AM IST digest orchestrator (fetch → AI → email → push)
+│   ├── middleware/
+│   │   ├── auth.js                # JWT route protection middleware
+│   │   └── admin.js               # Admin-only authorization guard
+│   ├── models/
+│   │   ├── Digest.js              # Digest articles, AI insights, open-tracking & push metrics
+│   │   ├── User.js                # Subscriber profile, hashed auth & OTP state
+│   │   ├── PendingUser.js         # TTL-indexed 15-min pending signup OTP records
+│   │   ├── PushSubscription.js    # Browser Web Push VAPID endpoints
+│   │   └── AppConfig.js           # Persistent runtime key storage (auto VAPID keys)
+│   ├── routes/
+│   │   ├── archive.js             # SSR SEO pages (/archive, /archive/:date)
+│   │   ├── auth.js                # Signup OTP, Login, Forgot Password, Subscription toggle
+│   │   ├── news.js                # Homepage preview, Today's digest, 7-day history
+│   │   ├── newsletter.js          # Secure cron/manual trigger & admin test email
+│   │   ├── push.js                # VAPID public key, push subscribe/unsubscribe & test push
+│   │   ├── track.js               # 1×1 transparent GIF email open tracking endpoint
+│   │   └── admin.js               # Subscriber management, open rates & push analytics
+│   ├── services/
+│   │   ├── newsService.js         # India-first (60/40) NewsAPI queries & relevance filter
+│   │   ├── aiService.js           # Gemini batched "Why This Matters" + heuristic fallback
+│   │   ├── emailService.js        # Brevo HTTP API sender + 4 responsive dark-theme templates
+│   │   └── pushService.js         # VAPID Web Push broadcaster & expired endpoint cleanup
+│   └── utils/dateIST.js           # Timezone-safe IST (UTC+5:30) date helpers
 ├── public/
-│   ├── index.html            # Landing / Auth Entry Interface
-│   ├── dashboard.html        # Interactive User Profile Panel
-│   ├── admin.html            # Secure Admin Dashboard
-│   ├── css/                  # Styling files (style.css, dashboard.css, admin.css)
-│   ├── js/                   # Frontend Controllers (app.js, dashboard.js, admin.js)
-│   └── images/               # SVGs and Media Assets (logo.svg, favicon.svg)
-├── .env.example              # Configuration Blueprint
-└── README.md                 # Documentation
+│   ├── index.html                 # SEO-optimized landing page, countdown & topic search
+│   ├── dashboard.html             # Subscriber digest reader with AI summaries & social share
+│   ├── admin.html                 # Admin overview, open-rate stats, subscriber & push tools
+│   ├── manifest.json              # PWA Web App Manifest
+│   ├── sw.js                      # Service Worker (PWA offline shell + Push listener)
+│   ├── robots.txt                 # Search engine crawl directives
+│   ├── css/                       # style.css, dashboard.css, admin.css
+│   ├── js/                        # pwa.js, app.js, dashboard.js, admin.js
+│   └── images/                    # SVG logo, true PNG PWA icons (192/512/180/96/64) & banners
+├── .env.example                   # Environment template
+└── package.json
 ```
 
 ---
 
-## ⚙️ Setting Up Locally
+## ⚙️ Local Setup
 
-### 1. Pre-requisites
-*   **MongoDB Atlas Cluster** (Free tier)
-*   **Brevo API Key** (v3 Transactional Key)
-*   **NewsAPI Key** (Free Developer Key)
+### 1. Prerequisites
+- **Node.js** `>= 18.0.0`
+- **MongoDB Atlas** cluster URI
+- **NewsAPI Key** (`newsapi.org`)
+- **Brevo API Key** (`v3` transactional key)
+- *(Optional)* **Google Gemini API Key** (`aistudio.google.com`) for LLM-generated *"Why This Matters"* takeaways
 
-### 2. Installation
+### 2. Install & Configure
 ```bash
-# Clone the repository
 git clone https://github.com/md-rounaq-ali/nexbrief-daily-it-intelligence-platform.git
 cd nexbrief-daily-it-intelligence-platform
-
-# Install dependencies
 npm install
 ```
 
-### 3. Environment Configurations
-Rename `.env.example` to `.env` and populate it with your keys:
-```env
-PORT=3000
-MONGODB_URI=your_mongodb_connection_string
-JWT_SECRET=your_jwt_secret_token
-BREVO_API_KEY=your_brevo_xkeysib_api_key
-FROM_EMAIL=your_sender_email@domain.com
-FROM_NAME="NexBrief Daily"
-APP_URL=http://localhost:3000
-```
-*(Note: Be sure to use `MONGODB_URI` exactly as shown above, which is what the database connection driver expects).*
+Copy `.env.example` to `.env` and fill in your credentials (`MONGODB_URI`, `JWT_SECRET`, `NEWS_API_KEY`, `BREVO_API_KEY`, `FROM_EMAIL`, `APP_URL`, and optional `GEMINI_API_KEY`).
 
-### 4. Running the Development Server
+### 3. Run Development or Production Server
 ```bash
+# Development (auto-reload with nodemon)
 npm run dev
+
+# Production
+npm start
 ```
-Open `http://localhost:3000` in your web browser.
+Open `http://localhost:3000`.
 
 ---
 
-## 🌐 Live Deployment & Automation
+## ⏰ Daily Automation (Render + cron-job.org)
 
-This project is configured for deployment on **Render.com** (hosting the Node/Express backend) and **cron-job.org** (triggering the automated daily newsletter delivery).
-
-### Automating the Daily Digest:
-To trigger the automated daily dispatch, set up a cron job pointing to:
-* **Endpoint:** `POST https://nexbrief-news.onrender.com/api/newsletter/trigger`
-* **Headers:** `Content-Type: application/json`
-* **Body:**
-  ```json
-  {
-    "secretKey": "your_jwt_secret_token"
-  }
-  ```
-* **Schedule:** Daily at `07:00 AM IST` (Timezone: `Asia/Kolkata`)
+| Trigger | Schedule | Endpoint | Notes |
+| :--- | :--- | :--- | :--- |
+| **Keep-Alive Ping** | Every 10–14 min | `GET /api/health` | Prevents Render free-tier sleep |
+| **Daily Digest** | `07:00 AM IST` (`Asia/Kolkata`) | `POST /api/newsletter/trigger` | JSON body: `{"secretKey": "<JWT_SECRET>"}` |
 
 ---
 
-## 📜 Credits & License
+## 👨‍💻 Author & License
 
-*   **Made by Md Rounaq Ali** for India's engineers. Portfolio: [md-rounaq-ali.netlify.app](https://md-rounaq-ali.netlify.app/)
-*   Licensed under the MIT License. Feel free to clone, modify, and host!
+Built with care for India's engineering community by **[Md Rounaq Ali](https://md-rounaq-ali.netlify.app/)** (B.Tech CSE, NNRESGI Hyderabad).  
+🔎 Search Creator on Google: **[md rounaq ali ↗](https://www.google.com/search?q=md+rounaq+ali)**
+
+Licensed under the **MIT License**.

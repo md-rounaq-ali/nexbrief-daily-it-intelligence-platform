@@ -73,6 +73,12 @@ const loadStats = async () => {
     $('#stat-subscribed').textContent = stats.subscribedUsers;
     $('#stat-digests').textContent = stats.totalDigests;
     $('#stat-unsubscribed').textContent = stats.unsubscribedUsers;
+    if ($('#stat-open-rate')) {
+      $('#stat-open-rate').textContent = stats.avgOpenRate !== null && stats.avgOpenRate !== undefined ? `${stats.avgOpenRate}%` : '—';
+    }
+    if ($('#stat-push-subs')) {
+      $('#stat-push-subs').textContent = stats.pushSubscribers ?? 0;
+    }
 
     // Today status
     const todayIcon = $('#today-icon');
@@ -94,17 +100,22 @@ const loadStats = async () => {
     const tbody = $('#recent-digests-body');
     tbody.innerHTML = '';
     if (stats.recentDigests.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--color-text-muted);padding:24px;">No digests sent yet.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--color-text-muted);padding:24px;">No digests sent yet.</td></tr>';
       return;
     }
     stats.recentDigests.forEach(d => {
       const tr = document.createElement('tr');
       const dateStr = new Date(d.date + 'T00:00:00').toLocaleDateString('en-IN', { weekday: 'short', month: 'short', day: 'numeric' });
       const sentAt = d.sentAt ? new Date(d.sentAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) : '—';
+      const openText = d.recipientCount > 0
+        ? `${d.uniqueOpens || 0}/${d.recipientCount} (${d.openRate || 0}%)`
+        : '—';
       tr.innerHTML = `
-        <td style="font-weight:600;">${dateStr}</td>
+        <td style="font-weight:600;"><a href="/archive/${d.date}" target="_blank" style="color:var(--color-primary-light);">${dateStr}</a></td>
         <td><span class="status-badge status-sent">✓ Sent</span></td>
         <td>${d.recipientCount} subscribers</td>
+        <td><span class="status-badge" style="background:rgba(6,182,212,0.15);color:#67e8f9;">${openText}</span></td>
+        <td>${d.pushSentCount || 0}</td>
         <td>${sentAt}</td>
       `;
       tbody.appendChild(tr);
@@ -183,13 +194,13 @@ const loadSubscribers = async (page = 1) => {
 // ── Load Digests ──────────────────────────────────────────────────────────────
 const loadDigests = async () => {
   const tbody = $('#digests-body');
-  tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--color-text-muted);padding:24px;">Loading...</td></tr>';
+  tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--color-text-muted);padding:24px;">Loading...</td></tr>';
   try {
     const res = await fetch(`${API_BASE}/admin/digests`, { headers: { Authorization: `Bearer ${token}` } });
     const data = await res.json();
     tbody.innerHTML = '';
     if (!data.digests.length) {
-      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--color-text-muted);padding:24px;">No digests recorded yet.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--color-text-muted);padding:24px;">No digests recorded yet.</td></tr>';
       return;
     }
     data.digests.forEach(d => {
@@ -198,10 +209,15 @@ const loadDigests = async () => {
       const statusMap = { sent: 'status-sent', draft: 'status-draft', failed: 'status-failed' };
       const statusLabel = { sent: '✓ Sent', draft: '⏳ Draft', failed: '✗ Failed' };
       const sentAt = d.sentAt ? new Date(d.sentAt).toLocaleString('en-IN', { dateStyle: 'short', timeStyle: 'short' }) : '—';
+      const openCell = d.recipientCount > 0
+        ? `${d.uniqueOpens || 0}/${d.recipientCount} (${d.openRate || 0}%)`
+        : '—';
       tr.innerHTML = `
-        <td style="font-weight:600;">${dateStr}</td>
+        <td style="font-weight:600;"><a href="/archive/${d.date}" target="_blank" style="color:var(--color-primary-light);">${dateStr}</a></td>
         <td><span class="status-badge ${statusMap[d.status] || 'status-draft'}">${statusLabel[d.status] || d.status}</span></td>
         <td>${d.recipientCount || 0}</td>
+        <td><span class="status-badge" style="background:rgba(6,182,212,0.15);color:#67e8f9;">${openCell}</span></td>
+        <td>${d.pushSentCount || 0}</td>
         <td style="text-transform:capitalize;">${d.triggerSource || '—'}</td>
         <td style="color:var(--color-text-muted);font-size:13px;">${sentAt}</td>
       `;
@@ -344,6 +360,34 @@ $('#send-test-btn')?.addEventListener('click', async () => {
   } catch {
     result.textContent = '❌ Network error.';
     result.className = 'send-result error-text';
+  }
+});
+
+// ── Send Test Push Notification ───────────────────────────────────────────────
+$('#send-test-push-btn')?.addEventListener('click', async () => {
+  const btn = $('#send-test-push-btn');
+  const result = $('#test-push-result');
+  btn.disabled = true;
+  result.textContent = '⏳ Sending test push notification...';
+  result.className = 'send-result';
+  try {
+    const res = await fetch(`${API_BASE}/push/test`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    });
+    const data = await res.json();
+    if (data.success) {
+      result.textContent = `✅ ${data.message}`;
+      loadStats();
+    } else {
+      result.textContent = `❌ Error: ${data.message}`;
+      result.className = 'send-result error-text';
+    }
+  } catch {
+    result.textContent = '❌ Network error.';
+    result.className = 'send-result error-text';
+  } finally {
+    btn.disabled = false;
   }
 });
 

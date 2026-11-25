@@ -7,10 +7,12 @@
   <meta name="robots" content="noindex, nofollow" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#6366f1" />
   <link rel="icon" type="image/png" href="/images/favicon.png" />
   <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
   <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
-  <link rel="apple-touch-icon" href="/images/favicon.png" />
+  <link rel="apple-touch-icon" href="/images/apple-touch-icon.png" />
   <link rel="stylesheet" href="/css/style.css" />
   <link rel="stylesheet" href="/css/dashboard.css" />
 </head>
@@ -23,11 +25,11 @@
       <button class="sidebar-close" id="sidebar-close" aria-label="Close">✕</button>
     </div>
     <nav class="sidebar-nav">
-      <a href="#today" class="sidebar-link active" onclick="closeAllModals()">
+      <a href="#today" class="sidebar-link active" id="nav-today-link">
         <span class="nav-icon">🗞️</span> Today's Digest
       </a>
       <a href="#it-news" class="sidebar-link">
-        <span class="nav-icon">🔴</span> IT & Technology <span class="sidebar-pct">50%</span>
+        <span class="nav-icon">🔴</span> IT &amp; Jobs <span class="sidebar-pct">50%</span>
       </a>
       <a href="#edu-news" class="sidebar-link">
         <span class="nav-icon">📚</span> Education <span class="sidebar-pct">30%</span>
@@ -37,6 +39,9 @@
       </a>
       <a href="#history" class="sidebar-link">
         <span class="nav-icon">📁</span> Past Digests
+      </a>
+      <a href="/archive" class="sidebar-link">
+        <span class="nav-icon">🏛️</span> Public Archive
       </a>
     </nav>
     <div class="sidebar-footer">
@@ -48,6 +53,8 @@
         </div>
       </div>
       <div class="sidebar-actions">
+        <button class="btn btn-ghost btn-sm btn-full push-optin-btn" id="dash-push-btn">🔔 7 AM Alerts</button>
+        <button class="btn btn-ghost btn-sm btn-full pwa-install-btn hidden" id="dash-install-btn">📲 Install App</button>
         <button class="btn btn-ghost btn-sm btn-full" id="subscribe-toggle-btn">⏸ Pause Digest</button>
         <button class="btn btn-danger btn-sm btn-full" id="logout-btn">🚪 Sign Out</button>
       </div>
@@ -71,6 +78,10 @@
         <p class="page-date" id="page-date">Loading...</p>
       </div>
       <div class="page-header-actions">
+        <div class="dash-countdown-chip" title="Time remaining until next 7:00 AM IST briefing">
+          <span>⏰ Next digest in:</span>
+          <strong class="live-digest-countdown" data-countdown>--:--:--</strong>
+        </div>
         <div class="delivery-badge" id="delivery-badge">
           <span class="badge-dot"></span>
           <span id="delivery-status">Loading...</span>
@@ -222,7 +233,7 @@
     </div>
   </div>
 
-  <script>function closeAllModals(){}</script>
+  <script src="/js/pwa.js"></script>
   <script src="/js/dashboard.js"></script>
 </body>
 </html>

@@ -364,6 +364,7 @@
   background: linear-gradient(135deg, rgba(99,102,241,0.04) 0%, transparent 60%);
   opacity: 0;
   transition: opacity var(--transition);
+  pointer-events: none;
 }
 .news-card:hover {
   border-color: rgba(99,102,241,0.3);
@@ -450,6 +451,7 @@
 .card-read-btn:hover { color: var(--color-primary); }
 
 /* Category Colors */
+.cat-jobs { background: #059669; }
 .cat-ai { background: #6366f1; }
 .cat-cybersecurity { background: #ef4444; }
 .cat-software { background: #10b981; }
@@ -461,6 +463,36 @@
 .cat-research { background: #06b6d4; }
 .cat-science { background: #ec4899; }
 .cat-general { background: #64748b; }
+
+/* Dashboard Countdown & India Pill & Share Row */
+.dash-countdown-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(56, 189, 248, 0.1);
+  border: 1px solid rgba(56, 189, 248, 0.28);
+  border-radius: 100px;
+  padding: 6px 14px;
+  font-size: 12px;
+  color: var(--color-text-2);
+  white-space: nowrap;
+}
+.card-india-pill {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 100px;
+  background: rgba(16, 185, 129, 0.14);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.28);
+}
+.card-share-bar {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
 
 /* ---- History Grid ---- */
 .history-grid {

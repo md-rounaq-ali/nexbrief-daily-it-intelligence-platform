@@ -5,7 +5,10 @@ const Digest = require('./server/models/Digest');
 
 const view = async () => {
   try {
-    const uri = process.env.MONGODB_URI || "mongodb+srv://nexbriefuser:NexBrief2024@cluster0.ef3ntf5.mongodb.net/nexbrief?appName=Cluster0";
+    const uri = process.env.MONGODB_URI;
+    if (!uri) {
+      throw new Error('MONGODB_URI is not set in environment variables (.env).');
+    }
     console.log('🔌 Connecting to MongoDB...');
     await mongoose.connect(uri);
     console.log('✅ Connected successfully!\n');
@@ -33,8 +36,10 @@ const view = async () => {
       console.table(digests.map(d => ({
         Date: d.date,
         Status: d.status.toUpperCase(),
-        'Recipient Count': d.recipientCount,
-        'Trigger Source': d.triggerSource || 'cron-job',
+        Recipients: d.recipientCount,
+        Opens: `${d.openedBy?.length || 0}/${d.recipientCount || 0}`,
+        'Push Sent': d.pushSentCount || 0,
+        'Trigger Source': d.triggerSource || 'cron',
         'Sent At': d.sentAt ? new Date(d.sentAt).toLocaleString('en-IN') : '—'
       })));
     }
