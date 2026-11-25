@@ -168,9 +168,19 @@ const buildDigestEmailHtml = (user, digest, dateStr) => {
           </div>
           ${renderCards(digest.generalNews) || '<p style="color:#64748b;font-size:14px;">No world news today.</p>'}
         </td></tr>
-        <tr><td style="background:#0f172a;border-radius:0 0 20px 20px;padding:24px 32px;text-align:center;border-top:1px solid #1e293b;">
-          <a href="${process.env.APP_URL || 'http://localhost:3000'}/dashboard" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;font-size:14px;font-weight:700;padding:12px 28px;border-radius:10px;text-decoration:none;display:inline-block;margin-bottom:16px;">🖥️ Open Full Dashboard</a>
-          <p style="color:#475569;font-size:12px;margin:12px 0 0 0;line-height:1.6;">You're subscribed to <strong style="color:#818cf8;">NexBrief Daily</strong> · Delivered every morning at <strong>7:00 AM IST</strong><br/>© ${new Date().getFullYear()} NexBrief</p>
+        <tr><td style="background:#0f172a;border-radius:0 0 20px 20px;padding:28px 32px;text-align:center;border-top:1px solid #1e293b;">
+          <a href="${process.env.APP_URL || 'http://localhost:3000'}/dashboard" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#ffffff;font-size:14px;font-weight:700;padding:12px 28px;border-radius:10px;text-decoration:none;display:inline-block;margin-bottom:18px;letter-spacing:0.3px;">🖥️ Open Full Dashboard</a>
+          <p style="color:#64748b;font-size:12px;margin:0 0 16px 0;line-height:1.6;">
+            You're subscribed to <strong style="color:#818cf8;">NexBrief Daily</strong> · Delivered every morning at <strong>7:00 AM IST</strong>
+          </p>
+          <div style="border-top:1px solid #1e293b;padding-top:16px;">
+            <p style="color:#94a3b8;font-size:12px;margin:0 0 10px 0;line-height:1.6;">
+              © ${new Date().getFullYear()} NexBrief. All rights reserved. Developed by <a href="https://md-rounaq-ali.netlify.app/" target="_blank" style="color:#818cf8;text-decoration:underline;font-weight:600;">Md Rounaq Ali</a> for India's engineers.
+            </p>
+            <p style="color:#64748b;font-size:12px;margin:0;line-height:1.6;">
+              Search Creator on Google: &nbsp;<a href="https://www.google.com/search?q=md+rounaq+ali" target="_blank" style="display:inline-block;padding:4px 14px;background:#0f2942;border:1px solid #0284c7;border-radius:20px;color:#38bdf8;font-size:12px;font-weight:600;text-decoration:none;">md rounaq ali ↗</a>
+            </p>
+          </div>
         </td></tr>
       </table>
     </td></tr>
@@ -211,8 +221,14 @@ const buildRegistrationOTPHtml = (name, email, otp) => {
             <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:10px;padding:14px;margin-bottom:20px;">
               <p style="color:#6ee7b7;font-size:13px;margin:0;">🔒 <strong>Security:</strong> If you did not try to register on NexBrief, ignore this email. No account has been created yet.</p>
             </div>
-            <hr style="border:none;border-top:1px solid #1e293b;margin-bottom:18px;">
-            <p style="color:#475569;font-size:12px;text-align:center;margin:0;">© ${new Date().getFullYear()} NexBrief &nbsp;·&nbsp; Built for IT professionals & engineering students</p>
+            <div style="border-top:1px solid #1e293b;margin-top:20px;padding-top:16px;text-align:center;">
+              <p style="color:#94a3b8;font-size:12px;margin:0 0 10px 0;line-height:1.6;">
+                © ${new Date().getFullYear()} NexBrief. All rights reserved. Developed by <a href="https://md-rounaq-ali.netlify.app/" target="_blank" style="color:#6ee7b7;text-decoration:underline;font-weight:600;">Md Rounaq Ali</a> for India's engineers.
+              </p>
+              <p style="color:#64748b;font-size:12px;margin:0;line-height:1.6;">
+                Search Creator on Google: &nbsp;<a href="https://www.google.com/search?q=md+rounaq+ali" target="_blank" style="display:inline-block;padding:4px 14px;background:#0f2942;border:1px solid #0284c7;border-radius:20px;color:#38bdf8;font-size:12px;font-weight:600;text-decoration:none;">md rounaq ali ↗</a>
+              </p>
+            </div>
           </td>
         </tr>
       </table>
@@ -247,8 +263,14 @@ const buildOTPEmailHtml = (user, otp) => {
               <div style="color:#64748b;font-size:12px;margin-top:10px;">⏰ Expires in 10 minutes</div>
             </div>
             <p style="color:#64748b;font-size:13px;line-height:1.6;margin:0 0 20px 0;">If you didn't request this, safely ignore this email. Your password will not change.</p>
-            <hr style="border:none;border-top:1px solid #1e293b;margin-bottom:20px;">
-            <p style="color:#475569;font-size:12px;text-align:center;margin:0;">© ${new Date().getFullYear()} NexBrief &nbsp;·&nbsp; Automated security email</p>
+            <div style="border-top:1px solid #1e293b;margin-top:20px;padding-top:16px;text-align:center;">
+              <p style="color:#94a3b8;font-size:12px;margin:0 0 10px 0;line-height:1.6;">
+                © ${new Date().getFullYear()} NexBrief. All rights reserved. Developed by <a href="https://md-rounaq-ali.netlify.app/" target="_blank" style="color:#818cf8;text-decoration:underline;font-weight:600;">Md Rounaq Ali</a> for India's engineers.
+              </p>
+              <p style="color:#64748b;font-size:12px;margin:0;line-height:1.6;">
+                Search Creator on Google: &nbsp;<a href="https://www.google.com/search?q=md+rounaq+ali" target="_blank" style="display:inline-block;padding:4px 14px;background:#0f2942;border:1px solid #0284c7;border-radius:20px;color:#38bdf8;font-size:12px;font-weight:600;text-decoration:none;">md rounaq ali ↗</a>
+              </p>
+            </div>
           </td>
         </tr>
       </table>
@@ -285,7 +307,14 @@ const buildWelcomeEmailHtml = (user) => {
             <div style="text-align:center;margin-bottom:22px;">
               <a href="${process.env.APP_URL || 'http://localhost:3000'}/dashboard" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;font-size:15px;font-weight:700;padding:14px 36px;border-radius:12px;text-decoration:none;display:inline-block;">🚀 Go to Your Dashboard</a>
             </div>
-            <p style="color:#475569;font-size:12px;text-align:center;margin:0;">© ${new Date().getFullYear()} NexBrief · Built for IT professionals & engineering students</p>
+            <div style="border-top:1px solid #1e293b;margin-top:20px;padding-top:16px;text-align:center;">
+              <p style="color:#94a3b8;font-size:12px;margin:0 0 10px 0;line-height:1.6;">
+                © ${new Date().getFullYear()} NexBrief. All rights reserved. Developed by <a href="https://md-rounaq-ali.netlify.app/" target="_blank" style="color:#818cf8;text-decoration:underline;font-weight:600;">Md Rounaq Ali</a> for India's engineers.
+              </p>
+              <p style="color:#64748b;font-size:12px;margin:0;line-height:1.6;">
+                Search Creator on Google: &nbsp;<a href="https://www.google.com/search?q=md+rounaq+ali" target="_blank" style="display:inline-block;padding:4px 14px;background:#0f2942;border:1px solid #0284c7;border-radius:20px;color:#38bdf8;font-size:12px;font-weight:600;text-decoration:none;">md rounaq ali ↗</a>
+              </p>
+            </div>
           </td>
         </tr>
       </table>

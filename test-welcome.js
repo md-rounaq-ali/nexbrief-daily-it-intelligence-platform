@@ -23,6 +23,14 @@ const buildWelcomeEmailHtml = (user) => {
           <td style="background:#0f172a;border-radius:0 0 20px 20px;padding:32px;">
             <h2 style="color:#f1f5f9;font-size:20px;font-weight:700;margin:0 0 12px 0;">Hello, ${user.name}! 👋</h2>
             <p style="color:#94a3b8;font-size:14px;line-height:1.7;margin:0 0 20px 0;">You've successfully joined <strong style="color:#818cf8;">NexBrief</strong> — the first dedicated daily intelligence platform for <strong style="color:#f1f5f9;">IT professionals and engineering students</strong>.</p>
+            <div style="border-top:1px solid #1e293b;margin-top:20px;padding-top:16px;text-align:center;">
+              <p style="color:#94a3b8;font-size:12px;margin:0 0 10px 0;line-height:1.6;">
+                © ${new Date().getFullYear()} NexBrief. All rights reserved. Developed by <a href="https://md-rounaq-ali.netlify.app/" target="_blank" style="color:#818cf8;text-decoration:underline;font-weight:600;">Md Rounaq Ali</a> for India's engineers.
+              </p>
+              <p style="color:#64748b;font-size:12px;margin:0;line-height:1.6;">
+                Search Creator on Google: &nbsp;<a href="https://www.google.com/search?q=md+rounaq+ali" target="_blank" style="display:inline-block;padding:4px 14px;background:#0f2942;border:1px solid #0284c7;border-radius:20px;color:#38bdf8;font-size:12px;font-weight:600;text-decoration:none;">md rounaq ali ↗</a>
+              </p>
+            </div>
           </td>
         </tr>
       </table>
